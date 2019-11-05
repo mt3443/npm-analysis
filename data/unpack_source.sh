@@ -1,0 +1,1 @@
+mkdir malicious_source; mkdir benign_source; cd malicious_tarballs; for i in *; do mkdir ../malicious_source/$i; tar zxf $i -C ../malicious_source/$i; done; cd ../benign_tarballs; for i in *; do mkdir ../benign_source/$i; tar zxf $i -C ../malicious_source/$i; done; cd ..;
