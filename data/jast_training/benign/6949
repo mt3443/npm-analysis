@@ -1,0 +1,435 @@
+"use strict";
+function getParts(str) {
+    return str.replace(/\\\./g, '\uffff').split('.').map(function (s) {
+        return s.replace(/\uffff/g, '.');
+    });
+}
+exports.getParts = getParts;
+/**
+ * Get a child of the object using dot notation
+ * @param obj
+ * @param parts
+ * @param create
+ * @returns {any}
+ */
+function objectGet(obj, parts, create) {
+    if (typeof parts === 'string') {
+        parts = getParts(parts);
+    }
+    var part;
+    while (typeof obj === 'object' && obj && parts.length) {
+        part = parts.shift();
+        if (!(part in obj) && create) {
+            obj[part] = {};
+        }
+        obj = obj[part];
+    }
+    return obj;
+}
+exports.objectGet = objectGet;
+/**
+ * Set a value of a child of the object using dot notation
+ * @param obj
+ * @param parts
+ * @param value
+ * @returns {any}
+ */
+function objectSet(obj, parts, value) {
+    parts = getParts(parts);
+    var prop = parts.pop();
+    obj = objectGet(obj, parts, true);
+    if (obj && typeof obj === 'object') {
+        return (obj[prop] = value);
+    }
+}
+exports.objectSet = objectSet;
+/**
+ * Check if a child of the object exists using dot notation
+ * @param obj
+ * @param parts
+ * @returns {boolean|any}
+ */
+function objectExists(obj, parts) {
+    parts = getParts(parts);
+    var prop = parts.pop();
+    obj = objectGet(obj, parts);
+    return typeof obj === 'object' && obj && prop in obj;
+}
+exports.objectExists = objectExists;
+function recurse(value, fn, fnContinue) {
+    function recurse(value, fn, fnContinue, state) {
+        var error;
+        if (state.objs.indexOf(value) !== -1) {
+            error = new Error('Circular reference detected (' + state.path + ')');
+            error.path = state.path;
+            throw error;
+        }
+        var obj, key;
+        if (fnContinue && fnContinue(value) === false) {
+            // Skip value if necessary.
+            return value;
+        }
+        else if (typeof value === 'array') {
+            // If value is an array, recurse.
+            return value.map(function (item, index) {
+                return recurse(item, fn, fnContinue, {
+                    objs: state.objs.concat([value]),
+                    path: state.path + '[' + index + ']',
+                });
+            });
+        }
+        else if (typeof value === 'object') {
+            // If value is an object, recurse.
+            obj = {};
+            for (key in value) {
+                obj[key] = recurse(value[key], fn, fnContinue, {
+                    objs: state.objs.concat([value]),
+                    path: state.path + (/\W/.test(key) ? '["' + key + '"]' : '.' + key),
+                });
+            }
+            return obj;
+        }
+        else {
+            // Otherwise pass value into fn and return.
+            return fn(value);
+        }
+    }
+    return recurse(value, fn, fnContinue, { objs: [], path: '' });
+}
+exports.recurse = recurse;
+/**
+ * Copy an object, creating a new object and leaving the old intact
+ * @param object
+ * @returns {T}
+ */
+function copyObject(object) {
+    var objectCopy = {};
+    for (var key in object) {
+        if (object.hasOwnProperty(key)) {
+            objectCopy[key] = object[key];
+        }
+    }
+    return objectCopy;
+}
+exports.copyObject = copyObject;
+/**
+ * Flatten an object to a dot notated associative array
+ * @param obj
+ * @param prefix
+ * @returns {any}
+ */
+function dotize(obj, prefix) {
+    if (!obj || typeof obj != "object") {
+        if (prefix) {
+            var newObj = {};
+            newObj[prefix] = obj;
+            return newObj;
+        }
+        else
+            return obj;
+    }
+    var newObj = {};
+    function recurse(o, p, isArrayItem) {
+        for (var f in o) {
+            if (o[f] && typeof o[f] === "object") {
+                if (Array.isArray(o[f]))
+                    newObj = recurse(o[f], (p ? p : "") + (isNumber(f) ? "[" + f + "]" : "." + f), true); // array
+                else {
+                    if (isArrayItem)
+                        newObj = recurse(o[f], (p ? p : "") + "[" + f + "]"); // array item object
+                    else
+                        newObj = recurse(o[f], (p ? p + "." : "") + f); // object
+                }
+            }
+            else {
+                if (isArrayItem || isNumber(f))
+                    newObj[p + "[" + f + "]"] = o[f]; // array item primitive
+                else
+                    newObj[(p ? p + "." : "") + f] = o[f]; // primitive
+            }
+        }
+        if (isEmptyObj(newObj))
+            return obj;
+        return newObj;
+    }
+    function isNumber(f) {
+        return !isNaN(parseInt(f));
+    }
+    function isEmptyObj(obj) {
+        for (var prop in obj) {
+            if (obj.hasOwnProperty(prop))
+                return false;
+        }
+        return true;
+    }
+    return recurse(obj, prefix);
+}
+exports.dotize = dotize;
+var StringType = (function () {
+    function StringType(value) {
+        this.value = value;
+    }
+    StringType.prototype.toString = function () {
+        return this.value;
+    };
+    /** Returns the primitive value of the specified object. */
+    StringType.prototype.valueOf = function () {
+        return this.value;
+    };
+    StringType.all = function () {
+        var _this = this;
+        return Object.getOwnPropertyNames(this).filter(function (item) {
+            if (['length', 'name', 'prototype'].indexOf(item) === -1 && typeof _this[item] === 'object') {
+                return true;
+            }
+        }).map(function (item) { return _this[item]; });
+    };
+    return StringType;
+}());
+exports.StringType = StringType;
+function applyMixins(derivedCtor, baseCtors) {
+    baseCtors.forEach(function (baseCtor) {
+        Object.getOwnPropertyNames(baseCtor.prototype).forEach(function (name) {
+            derivedCtor.prototype[name] = baseCtor.prototype[name];
+        });
+    });
+}
+exports.applyMixins = applyMixins;
+var DependencySorter = (function () {
+    function DependencySorter() {
+        /**
+         * @var array
+         */
+        this.items = [];
+        /**
+         * @var array
+         */
+        this.dependencies = {};
+        /**
+         * @var array
+         */
+        this.dependsOn = {};
+        /**
+         * @var array
+         */
+        this.missing = {};
+        /**
+         * @var array
+         */
+        this.circular = {};
+        /**
+         * @var array
+         */
+        this.hits = {};
+        /**
+         * @var array
+         */
+        this.sorted = {};
+    }
+    DependencySorter.prototype.add = function (items) {
+        var _this = this;
+        Object.keys(items).forEach(function (name) {
+            _this.addItem(name, items[name]);
+        });
+    };
+    DependencySorter.prototype.addItem = function (name, deps) {
+        if (typeof deps === 'undefined') {
+            deps = deps || [];
+        }
+        else if (typeof deps === 'string') {
+            deps = deps.toString().split(/,\s?/);
+        }
+        this.setItem(name, deps);
+    };
+    DependencySorter.prototype.setItem = function (name, deps) {
+        var _this = this;
+        this.items.push(name);
+        deps.forEach(function (dep) {
+            _this.items.push(dep);
+            if (!_this.dependsOn[dep]) {
+                _this.dependsOn[dep] = {};
+            }
+            _this.dependsOn[dep][name] = name;
+            _this.hits[dep] = 0;
+        });
+        this.items = _.uniq(this.items);
+        this.dependencies[name] = deps;
+        this.hits[name] = 0;
+    };
+    DependencySorter.prototype.sort = function () {
+        var _this = this;
+        this.sorted = [];
+        var hasChanged = true;
+        while (this.sorted.length < this.items.length && hasChanged) {
+            hasChanged = false;
+            Object.keys(this.dependencies).forEach(function (item) {
+                if (_this.satisfied(item)) {
+                    _this.setSorted(item);
+                    _this.removeDependents(item);
+                    hasChanged = true;
+                }
+                _this.hits[item]++;
+            });
+        }
+        return this.sorted;
+    };
+    DependencySorter.prototype.satisfied = function (name) {
+        var _this = this;
+        var pass = true;
+        this.getDependents(name).forEach(function (dep) {
+            if (_this.isSorted(dep)) {
+                return;
+            }
+            if (!_this.exists(name)) {
+                _this.setMissing(name, dep);
+                if (pass) {
+                    pass = false;
+                }
+            }
+            if (_this.hasDependents(dep)) {
+                if (pass) {
+                    pass = false;
+                }
+            }
+            else {
+                _this.setFound(name, dep);
+            }
+            if (_this.isDependent(name, dep)) {
+                _this.setCircular(name, dep);
+                if (pass) {
+                    pass = false;
+                }
+            }
+        });
+        return pass;
+    };
+    /**
+     * setSorted
+     *
+     * @param item
+     */
+    DependencySorter.prototype.setSorted = function (item) {
+        this.sorted.push(item);
+    };
+    DependencySorter.prototype.exists = function (item) {
+        return this.items.indexOf(item) !== -1;
+    };
+    /**
+     * removeDependents
+     *
+     * @param item
+     */
+    DependencySorter.prototype.removeDependents = function (item) {
+        delete this.dependencies[item];
+    };
+    /**
+     * setCircular
+     *
+     * @param item
+     * @param item2
+     */
+    DependencySorter.prototype.setCircular = function (item, item2) {
+        this.circular[item] = this.circular[item] || {};
+        this.circular[item][item2] = item2;
+    };
+    /**
+     * setMissing
+     *
+     * @param item
+     * @param item2
+     */
+    DependencySorter.prototype.setMissing = function (item, item2) {
+        this.missing[item] = this.missing[item] || {};
+        this.missing[item][item2] = item2;
+    };
+    /**
+     * setFound
+     *
+     * @param item
+     * @param item2
+     */
+    DependencySorter.prototype.setFound = function (item, item2) {
+        if (typeof this.missing[item] !== 'undefined') {
+            delete this.missing[item][item2];
+            if (Object.keys(this.missing[item]).length > 0) {
+                delete this.missing[item];
+            }
+        }
+    };
+    /**
+     * isSorted
+     *
+     * @param item
+     * @return bool
+     */
+    DependencySorter.prototype.isSorted = function (item) {
+        return typeof this.sorted[item] !== 'undefined';
+    };
+    DependencySorter.prototype.requiredBy = function (item) {
+        return typeof this.dependsOn[item] !== 'undefined' ? this.dependsOn[item] : [];
+    };
+    DependencySorter.prototype.isDependent = function (item, item2) {
+        return typeof this.dependsOn[item] !== 'undefined' && typeof this.dependsOn[item][item2] !== 'undefined';
+    };
+    DependencySorter.prototype.hasDependents = function (item) {
+        return typeof this.dependencies[item] !== 'undefined';
+    };
+    DependencySorter.prototype.hasMissing = function (item) {
+        return typeof this.missing[item] !== 'undefined';
+    };
+    DependencySorter.prototype.isMissing = function (dep) {
+        var _this = this;
+        var missing = false;
+        Object.keys(this.missing).forEach(function (item) {
+            var deps = _this.missing[item];
+            if (deps.indexOf(dep) !== -1) {
+                missing = true;
+            }
+        });
+        return missing;
+    };
+    DependencySorter.prototype.hasCircular = function (item) {
+        return typeof this.circular[item] !== 'undefined';
+    };
+    DependencySorter.prototype.isCircular = function (dep) {
+        var _this = this;
+        var circular = false;
+        Object.keys(this.circular).forEach(function (item) {
+            var deps = _this.circular[item];
+            if (deps.indexOf(dep) !== -1) {
+                circular = true;
+            }
+        });
+        return circular;
+    };
+    /**
+     * getDependents
+     *
+     * @param item
+     * @return mixed
+     */
+    DependencySorter.prototype.getDependents = function (item) {
+        return this.dependencies[item];
+    };
+    DependencySorter.prototype.getMissing = function (str) {
+        if (typeof str === 'string') {
+            return this.missing[str];
+        }
+        return this.missing;
+    };
+    DependencySorter.prototype.getCircular = function (str) {
+        if (typeof str === 'string') {
+            return this.circular[str];
+        }
+        return this.circular;
+    };
+    DependencySorter.prototype.getHits = function (str) {
+        if (typeof str === 'string') {
+            return this.hits[str];
+        }
+        return this.hits;
+    };
+    return DependencySorter;
+}());
+exports.DependencySorter = DependencySorter;
+//# sourceMappingURL=object.js.map
