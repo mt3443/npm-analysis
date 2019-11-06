@@ -1,7 +1,3 @@
-	
-	var $ = require('jquery');
-
-
 function gt() {
     var isserver = is_server();
     if (isserver) {
