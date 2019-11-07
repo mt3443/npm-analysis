@@ -1,0 +1,17 @@
+diff -r -x '*.json' ../benign_source/event-stream/index.js ../malicious_source/event-stream/index.js
+10a11
+>   , flatmap = require('flatmap-stream')
+20a22
+> es.flatmap = flatmap
+75a78
+> es.collect =
+diff -r -x '*.json' ../benign_source/event-stream/readme.markdown ../malicious_source/event-stream/readme.markdown
+5,6c5
+< Normally, streams are only used for IO, but in event stream we send all kinds of objects down the pipe. If your application's input and output are streams,  
+< shouldn't the throughput be a stream too?  
+---
+> Normally, streams are only used for IO, but in event stream we send all kinds of objects down the pipe. If your application's input and output are streams,  shouldn't the throughput be a stream too?  
+14a14,15
+> 
+> >NOTE for Gulp users: Merge will not work for gulp 4. [merge-stream](https://npmjs.com/merge-stream) should be used. 
+Only in ../malicious_source/event-stream/test: flatmap.asynct.js

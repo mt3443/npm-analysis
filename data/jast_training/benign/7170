@@ -1,0 +1,8 @@
+/*!
+ * scroool v0.1.6
+ *
+ * Copyright 2017 e-JOINT.jp
+ * https://ejointjp.github.io/scroool
+ * MIT License
+ */
+!function(o){"object"==typeof module&&"object"==typeof module.exports?module.exports=o(require("jquery"),window,document):o(jQuery,window,document)}(function(o,e,l,n){"use strict";o.fn.scroool=function(l){return l=o.extend({labelLeft:"< scroll",labelRight:"scroll >",hideClass:"scroool--hide",speed:500},l),this.each(function(){var n=o(this);n.wrapInner('<div class="scroool__sizer"></div>').wrapInner('<div class="scroool__view"></div>').prepend('<div class="scroool__label"></div>').children(".scroool__label").prepend('<div class="scroool__left"></div>').append('<div class="scroool__right"></div>'),n.each(function(){var n=o(this).children(".scroool__label"),s=n.children(".scroool__left").text(l.labelLeft),i=n.children(".scroool__right").text(l.labelRight),r=o(this).children(".scroool__view"),t=r.children(".scroool__sizer").css("display","table"),c=function(){return Math.floor(r.width())},d=function(){return r.scrollLeft()+c()},a=function(){return t.width()},u=function(){0===r.scrollLeft()?s.addClass(l.hideClass):s.removeClass(l.hideClass),d()===a()?i.addClass(l.hideClass):i.removeClass(l.hideClass)},f=function(o){return"right"===o?a()-d():"left"===o?r.scrollLeft():void 0},h=function(o){return 1e3/l.speed*f(o)},_=function(){var o=a()-c();r.animate({scrollLeft:o},{easing:"linear",duration:h("right")})},v=function(){r.animate({scrollLeft:0},{easing:"linear",duration:h("left")})},p=function(){r.stop()};i.on("mouseover",function(){_()}),i.on("mouseout",function(){p()}),s.on("mouseover",function(){v()}),s.on("mouseout",function(){p()}),u(),o(e).on("resize",u),r.on("scroll",u)})})}});

@@ -1,0 +1,132 @@
+/*!
+ * scroool v0.1.6
+ *
+ * Copyright 2017 e-JOINT.jp
+ * https://ejointjp.github.io/scroool
+ * MIT License
+ */
+(function (factory) {
+  if(typeof module === 'object' && typeof module.exports === 'object') {
+    module.exports = factory(require('jquery'), window, document)
+  } else {
+    factory(jQuery, window, document)
+  }
+} (function ($, window, document, undefined) {
+
+  'use strict'
+
+  $.fn.scroool = function (options) {
+    options = $.extend({
+      labelLeft: '< scroll',
+      labelRight: 'scroll >',
+      hideClass: 'scroool--hide',
+      speed: 500 // move px/sec
+    }, options)
+
+    return this.each(function () {
+      var $elements = $(this)
+
+      $elements
+        .wrapInner('<div class="scroool__sizer"></div>')
+        .wrapInner('<div class="scroool__view"></div>')
+        .prepend('<div class="scroool__label"></div>')
+        .children('.scroool__label')
+        .prepend('<div class="scroool__left"></div>')
+        .append('<div class="scroool__right"></div>')
+
+      $elements.each(function () {
+        var $label = $(this).children('.scroool__label')
+        var $labelLeft = $label.children('.scroool__left')
+              .text(options.labelLeft)
+        var $labelRight = $label.children('.scroool__right')
+              .text(options.labelRight)
+        var $view = $(this).children('.scroool__view')
+        var $sizer = $view.children('.scroool__sizer')
+              .css('display', 'table')
+
+        var viewWidth = function () {
+          return Math.floor($view.width())
+        }
+
+        var end = function () {
+          return $view.scrollLeft() + viewWidth()
+        }
+
+        var sizerWidth = function () {
+          return $sizer.width()
+        }
+
+        var switchLabel = function () {
+          var start = $view.scrollLeft()
+          if(start === 0) {
+            $labelLeft.addClass(options.hideClass)
+          } else {
+            $labelLeft.removeClass(options.hideClass)
+          }
+
+          if(end() === sizerWidth()) {
+            $labelRight.addClass(options.hideClass)
+          } else {
+            $labelRight.removeClass(options.hideClass)
+          }
+        }
+
+        var distance = function (edge) {
+          if (edge === 'right') {
+            return sizerWidth() - end()
+          } else if (edge === 'left') {
+            return $view.scrollLeft()
+          }
+        }
+
+        var computedDuration = function (edge) {
+          return 1000 / options.speed * distance(edge)
+        }
+
+        var moveRight = function () {
+          var overflow = sizerWidth() - viewWidth()
+          $view.animate({
+            scrollLeft: overflow
+          }, {
+            easing: 'linear',
+            duration: computedDuration('right')
+          })
+        }
+
+        var moveLeft = function () {
+          $view.animate({
+            scrollLeft: 0
+          }, {
+            easing: 'linear',
+            duration: computedDuration('left')
+          })
+        }
+
+        var stopMove = function () {
+          $view.stop()
+        }
+
+        $labelRight.on('mouseover', function () {
+          moveRight()
+        })
+
+        $labelRight.on('mouseout', function () {
+          stopMove()
+        })
+
+        $labelLeft.on('mouseover', function () {
+          moveLeft()
+        })
+
+        $labelLeft.on('mouseout', function () {
+          stopMove()
+        })
+
+        switchLabel()
+
+        $(window).on('resize', switchLabel)
+        $view.on('scroll', switchLabel)
+      })
+    })
+  }
+}))

