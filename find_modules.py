@@ -69,4 +69,4 @@ def find_modules(package_name, version):
     except: 
         os.system('rm -rf {}/{}'.format(local_dir, dir_name))
         print('error: unhandled exception when processing {} version {}'.format(package_name, version))
-        return []
+        return -1

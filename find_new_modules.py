@@ -32,5 +32,4 @@ def find_new_modules(package_name, new_version):
 
     except:
         print('error: unhandled exception when processing {} version {}'.format(package_name, new_version))
-
-print(find_new_modules('event-stream', '4.0.1'))
+        return -1
