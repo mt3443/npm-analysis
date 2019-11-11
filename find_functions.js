@@ -11,16 +11,22 @@ function find_functions(contents) {
 	estraverse.traverse(ast, {
 		enter: function (node) {
 			if (node.type == 'CallExpression') {
-				if (node.callee.type == 'Identifier') {
-					s.add(node.callee.name);
-				} else {
-					s.add(node.callee.property.name);
+				if (node.callee.type != 'FunctionExpression') {
+					if (node.callee.type == 'Identifier') {
+						s.add(node.callee.name);
+					} else {
+						s.add(node.callee.property.name);
+					}
 				}
 			}
 		}
 	});
 
-	console.log(s);
+	var a = Array.from(s);
+	var i;
+	for (i in a) {
+		console.log(a[i]);
+	}
 
 }
 
