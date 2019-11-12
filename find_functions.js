@@ -6,15 +6,20 @@ var fs = require('fs');
 function find_functions(contents) {
 
 	var s = new Set()
+	var invalid_types = [
+		'FunctionExpression',
+		'LogicalExpression',
+		'AssignmentExpression'
+	];
 
 	var ast = esprima.parse(contents)
 	estraverse.traverse(ast, {
 		enter: function (node) {
 			if (node.type == 'CallExpression') {
-				if (node.callee.type != 'FunctionExpression') {
+				if (!invalid_types.includes(node.callee.type)) {
 					if (node.callee.type == 'Identifier') {
 						s.add(node.callee.name);
-					} else {
+					} else if (node.callee.type == 'MemberExpression') {
 						s.add(node.callee.property.name);
 					}
 				}

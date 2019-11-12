@@ -7,7 +7,7 @@ function_counts = {}
 for root, dirs, files in os.walk(sys.argv[1]):
 	for f in files:
 		if f.endswith('.js'):
-			output = subprocess.check_output('node find_functions.js {}'.format(os.path.join(root, f).replace('\\', '/')), shell=True)
+			output = subprocess.check_output('node find_functions.js {}'.format(os.path.join(root, f)), shell=True)
 
 			function_names = output.decode('utf8').split()
 
