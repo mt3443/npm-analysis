@@ -11,7 +11,8 @@ if 'scripts' not in package_json:
 
 dangerous_commands = [
 	'curl',
-	'wget'
+	'wget',
+	'rm'
 ]
 
 scripts = package_json['scripts']
