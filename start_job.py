@@ -54,6 +54,6 @@ for node in nodes_cores:
 	f.close()
 
 for node in nodes_cores:
-	os.system('srun -N 1 -n {} -c 1 -w {} --exclusive python3 test_model.py {} {} &'.format(nodes_cores[node], node, node, nodes_cores[node])
+	os.system('srun -N 1 -n {} -c 1 -w {} --exclusive python3 test_model.py {} {} &'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
 os.system('wait')

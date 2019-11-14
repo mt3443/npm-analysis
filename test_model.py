@@ -5,7 +5,8 @@ import sys
 import time
 from itertools import count
 
-n_threads = 8
+script_id = sys.argv[1]
+n_threads = sys.argv[2]
 
 working_dir = '/dev/shm/npm'
 network_dir = '/users/m139t745/npm-analysis'
@@ -21,7 +22,6 @@ for i in range(n_threads):
     os.mkdir('{}/jast_models/{}'.format(working_dir, i))
     os.system('cp -r {}/jast/* {}/jast_models/{}'.format(network_dir, working_dir, i))
 
-script_id = sys.argv[1]
 all_packages = open('{}/package_names/{}'.format(volatile_dir, script_id), 'r').readlines()
 
 counter = count()
