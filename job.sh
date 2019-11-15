@@ -1,15 +1,148 @@
 #!/bin/bash
 
-#SBATCH -p intel
-#SBATCH -N 130
-#SBATCH -n 130
+#SBATCH -N 137
+#SBATCH -n 1152
 #SBATCH -c 1
-#SBATCH -t 99:00:00
+#SBATCH -t 48:00:00
 #SBATCH --mem-per-cpu=4096
 #SBATCH -J npm-analysis
 #SBATCH -o slurm-%j.out
 
-for i in {0..129}; do
-	srun -N1 -n1 --exclusive python3 test_model.py $i &
-done
+srun -N 1 -n 8 -c 1 -w l000 --exclusive python3 test_model.py l000 8 &
+srun -N 1 -n 8 -c 1 -w l001 --exclusive python3 test_model.py l001 8 &
+srun -N 1 -n 8 -c 1 -w l002 --exclusive python3 test_model.py l002 8 &
+srun -N 1 -n 8 -c 1 -w l003 --exclusive python3 test_model.py l003 8 &
+srun -N 1 -n 8 -c 1 -w l004 --exclusive python3 test_model.py l004 8 &
+srun -N 1 -n 8 -c 1 -w l005 --exclusive python3 test_model.py l005 8 &
+srun -N 1 -n 8 -c 1 -w l006 --exclusive python3 test_model.py l006 8 &
+srun -N 1 -n 8 -c 1 -w l007 --exclusive python3 test_model.py l007 8 &
+srun -N 1 -n 8 -c 1 -w l008 --exclusive python3 test_model.py l008 8 &
+srun -N 1 -n 8 -c 1 -w l009 --exclusive python3 test_model.py l009 8 &
+srun -N 1 -n 8 -c 1 -w l010 --exclusive python3 test_model.py l010 8 &
+srun -N 1 -n 8 -c 1 -w l011 --exclusive python3 test_model.py l011 8 &
+srun -N 1 -n 8 -c 1 -w l012 --exclusive python3 test_model.py l012 8 &
+srun -N 1 -n 8 -c 1 -w l013 --exclusive python3 test_model.py l013 8 &
+srun -N 1 -n 8 -c 1 -w l014 --exclusive python3 test_model.py l014 8 &
+srun -N 1 -n 8 -c 1 -w l015 --exclusive python3 test_model.py l015 8 &
+srun -N 1 -n 8 -c 1 -w l016 --exclusive python3 test_model.py l016 8 &
+srun -N 1 -n 8 -c 1 -w l017 --exclusive python3 test_model.py l017 8 &
+srun -N 1 -n 8 -c 1 -w l018 --exclusive python3 test_model.py l018 8 &
+srun -N 1 -n 8 -c 1 -w l019 --exclusive python3 test_model.py l019 8 &
+srun -N 1 -n 8 -c 1 -w l020 --exclusive python3 test_model.py l020 8 &
+srun -N 1 -n 8 -c 1 -w l021 --exclusive python3 test_model.py l021 8 &
+srun -N 1 -n 8 -c 1 -w l022 --exclusive python3 test_model.py l022 8 &
+srun -N 1 -n 8 -c 1 -w l023 --exclusive python3 test_model.py l023 8 &
+srun -N 1 -n 8 -c 1 -w l024 --exclusive python3 test_model.py l024 8 &
+srun -N 1 -n 8 -c 1 -w l025 --exclusive python3 test_model.py l025 8 &
+srun -N 1 -n 8 -c 1 -w l026 --exclusive python3 test_model.py l026 8 &
+srun -N 1 -n 8 -c 1 -w l027 --exclusive python3 test_model.py l027 8 &
+srun -N 1 -n 8 -c 1 -w l028 --exclusive python3 test_model.py l028 8 &
+srun -N 1 -n 8 -c 1 -w l029 --exclusive python3 test_model.py l029 8 &
+srun -N 1 -n 8 -c 1 -w l030 --exclusive python3 test_model.py l030 8 &
+srun -N 1 -n 8 -c 1 -w l031 --exclusive python3 test_model.py l031 8 &
+srun -N 1 -n 8 -c 1 -w l032 --exclusive python3 test_model.py l032 8 &
+srun -N 1 -n 8 -c 1 -w l033 --exclusive python3 test_model.py l033 8 &
+srun -N 1 -n 8 -c 1 -w l034 --exclusive python3 test_model.py l034 8 &
+srun -N 1 -n 8 -c 1 -w l035 --exclusive python3 test_model.py l035 8 &
+srun -N 1 -n 8 -c 1 -w l036 --exclusive python3 test_model.py l036 8 &
+srun -N 1 -n 8 -c 1 -w l037 --exclusive python3 test_model.py l037 8 &
+srun -N 1 -n 8 -c 1 -w l038 --exclusive python3 test_model.py l038 8 &
+srun -N 1 -n 8 -c 1 -w l039 --exclusive python3 test_model.py l039 8 &
+srun -N 1 -n 8 -c 1 -w l040 --exclusive python3 test_model.py l040 8 &
+srun -N 1 -n 8 -c 1 -w l041 --exclusive python3 test_model.py l041 8 &
+srun -N 1 -n 8 -c 1 -w l042 --exclusive python3 test_model.py l042 8 &
+srun -N 1 -n 8 -c 1 -w l043 --exclusive python3 test_model.py l043 8 &
+srun -N 1 -n 8 -c 1 -w l044 --exclusive python3 test_model.py l044 8 &
+srun -N 1 -n 8 -c 1 -w l045 --exclusive python3 test_model.py l045 8 &
+srun -N 1 -n 8 -c 1 -w l046 --exclusive python3 test_model.py l046 8 &
+srun -N 1 -n 8 -c 1 -w l047 --exclusive python3 test_model.py l047 8 &
+srun -N 1 -n 8 -c 1 -w l048 --exclusive python3 test_model.py l048 8 &
+srun -N 1 -n 8 -c 1 -w l049 --exclusive python3 test_model.py l049 8 &
+srun -N 1 -n 8 -c 1 -w l050 --exclusive python3 test_model.py l050 8 &
+srun -N 1 -n 8 -c 1 -w l051 --exclusive python3 test_model.py l051 8 &
+srun -N 1 -n 8 -c 1 -w l052 --exclusive python3 test_model.py l052 8 &
+srun -N 1 -n 8 -c 1 -w l053 --exclusive python3 test_model.py l053 8 &
+srun -N 1 -n 8 -c 1 -w l054 --exclusive python3 test_model.py l054 8 &
+srun -N 1 -n 8 -c 1 -w l055 --exclusive python3 test_model.py l055 8 &
+srun -N 1 -n 8 -c 1 -w l056 --exclusive python3 test_model.py l056 8 &
+srun -N 1 -n 8 -c 1 -w l057 --exclusive python3 test_model.py l057 8 &
+srun -N 1 -n 8 -c 1 -w l058 --exclusive python3 test_model.py l058 8 &
+srun -N 1 -n 16 -c 1 -w m001 --exclusive python3 test_model.py m001 16 &
+srun -N 1 -n 16 -c 1 -w m002 --exclusive python3 test_model.py m002 16 &
+srun -N 1 -n 16 -c 1 -w m011 --exclusive python3 test_model.py m011 16 &
+srun -N 1 -n 16 -c 1 -w m012 --exclusive python3 test_model.py m012 16 &
+srun -N 1 -n 8 -c 1 -w n013 --exclusive python3 test_model.py n013 8 &
+srun -N 1 -n 8 -c 1 -w n014 --exclusive python3 test_model.py n014 8 &
+srun -N 1 -n 8 -c 1 -w n015 --exclusive python3 test_model.py n015 8 &
+srun -N 1 -n 8 -c 1 -w n016 --exclusive python3 test_model.py n016 8 &
+srun -N 1 -n 8 -c 1 -w n017 --exclusive python3 test_model.py n017 8 &
+srun -N 1 -n 8 -c 1 -w n018 --exclusive python3 test_model.py n018 8 &
+srun -N 1 -n 8 -c 1 -w n019 --exclusive python3 test_model.py n019 8 &
+srun -N 1 -n 8 -c 1 -w n020 --exclusive python3 test_model.py n020 8 &
+srun -N 1 -n 8 -c 1 -w n021 --exclusive python3 test_model.py n021 8 &
+srun -N 1 -n 8 -c 1 -w n022 --exclusive python3 test_model.py n022 8 &
+srun -N 1 -n 8 -c 1 -w n023 --exclusive python3 test_model.py n023 8 &
+srun -N 1 -n 8 -c 1 -w n024 --exclusive python3 test_model.py n024 8 &
+srun -N 1 -n 8 -c 1 -w n025 --exclusive python3 test_model.py n025 8 &
+srun -N 1 -n 8 -c 1 -w n026 --exclusive python3 test_model.py n026 8 &
+srun -N 1 -n 8 -c 1 -w n027 --exclusive python3 test_model.py n027 8 &
+srun -N 1 -n 8 -c 1 -w n028 --exclusive python3 test_model.py n028 8 &
+srun -N 1 -n 8 -c 1 -w n029 --exclusive python3 test_model.py n029 8 &
+srun -N 1 -n 8 -c 1 -w n030 --exclusive python3 test_model.py n030 8 &
+srun -N 1 -n 8 -c 1 -w n031 --exclusive python3 test_model.py n031 8 &
+srun -N 1 -n 8 -c 1 -w n032 --exclusive python3 test_model.py n032 8 &
+srun -N 1 -n 8 -c 1 -w n033 --exclusive python3 test_model.py n033 8 &
+srun -N 1 -n 8 -c 1 -w n034 --exclusive python3 test_model.py n034 8 &
+srun -N 1 -n 8 -c 1 -w n035 --exclusive python3 test_model.py n035 8 &
+srun -N 1 -n 8 -c 1 -w n036 --exclusive python3 test_model.py n036 8 &
+srun -N 1 -n 8 -c 1 -w n037 --exclusive python3 test_model.py n037 8 &
+srun -N 1 -n 8 -c 1 -w n038 --exclusive python3 test_model.py n038 8 &
+srun -N 1 -n 8 -c 1 -w n039 --exclusive python3 test_model.py n039 8 &
+srun -N 1 -n 8 -c 1 -w n040 --exclusive python3 test_model.py n040 8 &
+srun -N 1 -n 8 -c 1 -w n041 --exclusive python3 test_model.py n041 8 &
+srun -N 1 -n 8 -c 1 -w n042 --exclusive python3 test_model.py n042 8 &
+srun -N 1 -n 8 -c 1 -w n043 --exclusive python3 test_model.py n043 8 &
+srun -N 1 -n 8 -c 1 -w n044 --exclusive python3 test_model.py n044 8 &
+srun -N 1 -n 8 -c 1 -w n045 --exclusive python3 test_model.py n045 8 &
+srun -N 1 -n 8 -c 1 -w n046 --exclusive python3 test_model.py n046 8 &
+srun -N 1 -n 8 -c 1 -w n047 --exclusive python3 test_model.py n047 8 &
+srun -N 1 -n 8 -c 1 -w n048 --exclusive python3 test_model.py n048 8 &
+srun -N 1 -n 8 -c 1 -w n049 --exclusive python3 test_model.py n049 8 &
+srun -N 1 -n 8 -c 1 -w n050 --exclusive python3 test_model.py n050 8 &
+srun -N 1 -n 8 -c 1 -w n051 --exclusive python3 test_model.py n051 8 &
+srun -N 1 -n 8 -c 1 -w n052 --exclusive python3 test_model.py n052 8 &
+srun -N 1 -n 8 -c 1 -w n053 --exclusive python3 test_model.py n053 8 &
+srun -N 1 -n 8 -c 1 -w n054 --exclusive python3 test_model.py n054 8 &
+srun -N 1 -n 8 -c 1 -w n055 --exclusive python3 test_model.py n055 8 &
+srun -N 1 -n 8 -c 1 -w n056 --exclusive python3 test_model.py n056 8 &
+srun -N 1 -n 8 -c 1 -w n057 --exclusive python3 test_model.py n057 8 &
+srun -N 1 -n 8 -c 1 -w n058 --exclusive python3 test_model.py n058 8 &
+srun -N 1 -n 8 -c 1 -w n059 --exclusive python3 test_model.py n059 8 &
+srun -N 1 -n 8 -c 1 -w n060 --exclusive python3 test_model.py n060 8 &
+srun -N 1 -n 8 -c 1 -w n061 --exclusive python3 test_model.py n061 8 &
+srun -N 1 -n 8 -c 1 -w n062 --exclusive python3 test_model.py n062 8 &
+srun -N 1 -n 8 -c 1 -w n063 --exclusive python3 test_model.py n063 8 &
+srun -N 1 -n 8 -c 1 -w n064 --exclusive python3 test_model.py n064 8 &
+srun -N 1 -n 8 -c 1 -w n081 --exclusive python3 test_model.py n081 8 &
+srun -N 1 -n 8 -c 1 -w n082 --exclusive python3 test_model.py n082 8 &
+srun -N 1 -n 8 -c 1 -w n083 --exclusive python3 test_model.py n083 8 &
+srun -N 1 -n 8 -c 1 -w n084 --exclusive python3 test_model.py n084 8 &
+srun -N 1 -n 8 -c 1 -w n085 --exclusive python3 test_model.py n085 8 &
+srun -N 1 -n 8 -c 1 -w n086 --exclusive python3 test_model.py n086 8 &
+srun -N 1 -n 8 -c 1 -w n087 --exclusive python3 test_model.py n087 8 &
+srun -N 1 -n 8 -c 1 -w n088 --exclusive python3 test_model.py n088 8 &
+srun -N 1 -n 8 -c 1 -w n089 --exclusive python3 test_model.py n089 8 &
+srun -N 1 -n 8 -c 1 -w n090 --exclusive python3 test_model.py n090 8 &
+srun -N 1 -n 8 -c 1 -w n091 --exclusive python3 test_model.py n091 8 &
+srun -N 1 -n 8 -c 1 -w n092 --exclusive python3 test_model.py n092 8 &
+srun -N 1 -n 8 -c 1 -w n111 --exclusive python3 test_model.py n111 8 &
+srun -N 1 -n 8 -c 1 -w n112 --exclusive python3 test_model.py n112 8 &
+srun -N 1 -n 8 -c 1 -w n113 --exclusive python3 test_model.py n113 8 &
+srun -N 1 -n 8 -c 1 -w n114 --exclusive python3 test_model.py n114 8 &
+srun -N 1 -n 8 -c 1 -w n115 --exclusive python3 test_model.py n115 8 &
+srun -N 1 -n 8 -c 1 -w n116 --exclusive python3 test_model.py n116 8 &
+srun -N 1 -n 8 -c 1 -w n117 --exclusive python3 test_model.py n117 8 &
+srun -N 1 -n 8 -c 1 -w n118 --exclusive python3 test_model.py n118 8 &
+srun -N 1 -n 20 -c 1 -w n295 --exclusive python3 test_model.py n295 20 &
+srun -N 1 -n 20 -c 1 -w n296 --exclusive python3 test_model.py n296 20 &
 wait
