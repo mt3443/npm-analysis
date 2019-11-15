@@ -80,5 +80,5 @@ f.write('wait\n')
 
 f.close()
 
-print('Done')
-print('Enter: \'sbatch job.sh\' to begin job')
+os.system('sbatch job.sh')
+print('Job started')
