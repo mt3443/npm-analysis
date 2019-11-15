@@ -74,7 +74,7 @@ f.write('#SBATCH -o slurm-%j.out\n')
 f.write('\n')
 
 for node in nodes_cores:
-	f.write('srun -N 1 -n {} -c 1 -w {} --exclusive python3 test_model.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
+	f.write('srun -N 1 -n {} -c 1 -w {} --exclusive python3 scan_packages.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
 f.write('wait\n')
 
