@@ -80,5 +80,5 @@ f.write('wait\n')
 
 f.close()
 
-os.system('sbatch job.sh')
+#os.system('sbatch job.sh')
 print('Job started')

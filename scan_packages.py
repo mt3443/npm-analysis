@@ -2,30 +2,37 @@ import os
 import subprocess
 import threading
 import sys
-import time
-from itertools import count
 
 script_id = sys.argv[1]
-n_threads = sys.argv[2]
+n_threads = int(sys.argv[2])
 
-working_dir = '/dev/shm/npm'
+working_dir = '/dev/shm/npm_{}'.format(script_id)
 network_dir = '/users/m139t745/npm-analysis'
 volatile_dir = '/volatile/m139t745'
 
-os.system('chmod -R 777 {}'.format(working_dir))
-os.system('rm -rf {}'.format(working_dir))
-os.mkdir(working_dir)
-os.mkdir('{}/jast_models'.format(working_dir))
-os.mkdir('{}/packages_temp'.format(working_dir))
+if not os.path.exists(working_dir):
+    os.mkdir(working_dir)
+
+if not os.path.exists('{}/jast_models'.format(working_dir)):
+    os.mkdir('{}/jast_models'.format(working_dir))
+
+if not os.path.exists('{}/packages_temp'.format(working_dir)):
+    os.mkdir('{}/packages_temp'.format(working_dir))
 
 for i in range(n_threads):
-    os.mkdir('{}/jast_models/{}'.format(working_dir, i))
-    os.system('cp -r {}/jast/* {}/jast_models/{}'.format(network_dir, working_dir, i))
+    if not os.path.exists('{}/jast_models/{}'.format(working_dir, i)):
+        os.mkdir('{}/jast_models/{}'.format(working_dir, i))
+        os.system('cp -r {}/jast/* {}/jast_models/{}'.format(network_dir, working_dir, i))
 
-all_packages = open('{}/package_names/{}'.format(volatile_dir, script_id), 'r').readlines()
+all_packages = open('{}/package_names/{}'.format(network_dir, script_id), 'r').readlines()
 
-counter = count()
 lock = threading.Lock()
+
+if not os.path.exists('{}/output'.format(network_dir)):
+    os.mkdir('{}/output'.format(network_dir))
+
+if not os.path.exists('{}/malicious_packages'.format(network_dir)):
+    os.mkdir('{}/malicious_packages'.format(network_dir))
 
 log_file = open('{}/output/{}'.format(network_dir, script_id), 'w')
 
@@ -35,19 +42,16 @@ def log(message):
     log_file.flush()
     lock.release()
 
-log('INFO: Node {} started with {} packages'.format(script_id, len(all_packages)))
-
 def thread_start(packages, thread_id):
 
     for package in packages:
 
-        with lock:
-            if next(counter) % 100 == 0:
-                log('INFO: Node {} has processed {} packages'.format(script_id, counter))
-
         try:
             dir_name = package[:-1]
             package_name = dir_name.replace('~', '/')
+
+            if os.path.exists('{}/packages_temp/{}'.format(working_dir, dir_name)):
+                os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
 
             os.mkdir('{}/packages_temp/{}'.format(working_dir, dir_name))
             os.system('cp {}/npm-packages/{}/*.tgz {}/packages_temp/{}'.format(volatile_dir, dir_name, working_dir, dir_name))
