@@ -49,8 +49,8 @@ if all_packages_request.status_code != 200:
 
 all_docs = all_packages_request.json()
 total_packages = all_docs['total_rows']
-all_packages_names = [x['id'] for x in all_docs['rows']]
-random.shuffle(all_packages_names)
+all_package_names = [x['id'] for x in all_docs['rows']]
+random.shuffle(all_package_names)
 
 del all_docs
 
@@ -71,8 +71,8 @@ os.mkdir('package_names')
 for node in nodes_cores:
 	f = open('package_names/{}'.format(node), 'w')
 	for p in range(packages_per_node):
-		f.write('{}\n'.format(all_packages.pop()))
-		if len(all_packages) == 0:
+		f.write('{}\n'.format(all_package_names.pop()))
+		if len(all_package_names) == 0:
 			break
 	f.close()
 
@@ -92,7 +92,7 @@ f.write('#SBATCH -o slurm-%j.out\n')
 f.write('\n')
 
 for node in nodes_cores:
-	f.write('srun -N1 -n1 -c{} -w {} --exclusive python3 package_downloader.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
+	f.write('srun -N1 -n1 -c{} -w {} python3 package_downloader.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
 f.write('wait\n')
 
