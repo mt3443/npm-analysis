@@ -95,7 +95,7 @@ def thread_start(packages, thread_id):
             js_files = open('{}/packages_temp/{}/js_files'.format(working_dir, dir_name), 'r').readlines()
 
             # run tests, record results
-            metadata = json.load(open('{}/packages_temp/{}/package.json'.format(working_dir, dir_name), 'r'))
+            metadata = json.load(open('{}/package.json'.format(package_dir_name), 'r'))
             row = metadata.name + ',' + metadata.version + ','
 
             row += has_scripts(metadata) + ','
