@@ -3,3 +3,4 @@ data/malicious_source
 node_modules
 output
 package_names
+package-lock.json
