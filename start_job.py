@@ -70,7 +70,6 @@ f.write('#!/bin/bash\n')
 f.write('\n')
 f.write('#SBATCH -N {}\n'.format(len(nodes_cores)))
 f.write('#SBATCH -n {}\n'.format(total_cores))
-f.write('#SBATCH -c 1\n')
 f.write('#SBATCH -t 48:00:00\n')
 f.write('#SBATCH --mem-per-cpu=4096\n')
 f.write('#SBATCH -J npm-analysis\n')
@@ -78,7 +77,7 @@ f.write('#SBATCH -o slurm-%j.out\n')
 f.write('\n')
 
 for node in nodes_cores:
-	f.write('srun -N 1 -n {} -c 1 -w {} --exclusive python3 scan_packages.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
+	f.write('srun -N1 -n1 -c{} -w {} --exclusive python3 scan_packages.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
 f.write('wait\n')
 
