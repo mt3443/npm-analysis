@@ -24,6 +24,10 @@ for node in all_nodes:
 	if 'CPUAlloc=0' in node and 'NodeName=g' not in node:
 		unused_nodes.append(node)
 
+# leave 20 nodes out of the kindness of my heart
+for i in range(20):
+    unused_nodes.pop(0)
+
 del all_nodes
 
 total_cores = 0
@@ -80,5 +84,5 @@ f.write('wait\n')
 
 f.close()
 
-#os.system('sbatch job.sh')
+os.system('sbatch job.sh')
 print('Job started')
