@@ -1,63 +1,102 @@
-import requests
 import os
-import threading
+import re
+import requests
+import random
 
-n_nodes = 64
+print('Getting node info...', flush=True)
+os.system('scontrol show node > node_info')
+node_info = open('node_info', 'r').readlines()
 
+all_nodes = []
+
+current_node = ''
+
+for line in node_info:
+	if line == '\n':
+		all_nodes.append(current_node)
+		current_node = ''
+	else:
+		current_node += line
+
+os.system('rm node_info')
+
+unused_nodes = []
+
+for node in all_nodes:
+	if 'CPUAlloc=0' in node and 'NodeName=g' not in node:
+		unused_nodes.append(node)
+
+unused_nodes = unused_nodes[:130]
+
+del all_nodes
+
+total_cores = 0
+nodes_cores = {}
+
+for node in unused_nodes:
+	name = re.findall(r'NodeName=(\S+)', node)[0]
+	n_cores = re.findall(r'CPUTot=(\d+)', node)[0]
+	nodes_cores[name] = n_cores
+	total_cores += int(n_cores)
+
+# get all package names
+print('Getting package names...', flush=True)
 all_packages_request = requests.get('https://replicate.npmjs.com/_all_docs')
 
 if all_packages_request.status_code != 200:
-	print('ERROR: status code {} returned for package list request'.format(all_packages_request.status_code))
-	exit(1)
+	print('Error: All packages request returned status code', all_packages_request.status_code)
+	exit()
 
-all_package_names = [x[:-1] for x in all_packages]
+all_docs = all_packages_request.json()
+total_packages = all_docs['total_rows']
+all_packages_names = [x['id'] for x in all_docs['rows']]
+random.shuffle(all_packages_names)
 
-del all_packages
+del all_docs
 
-def download_packages(packages):
-	for package_name in packages:
-		dir_name = package_name.replace('/', '~')
+packages_dir = '/volatile/m139t745/npm-packages'
 
-		try:
+if not os.path.exists(packages_dir):
+	os.mkdir(packages_dir)
 
-			metadata_request = requests.get('https://registry.npmjs.org/{}'.format(package_name))
+# divide packages equally among number of nodes
+packages_per_node = int(total_packages / len(nodes_cores)) + 1
 
-			if metadata_request.status_code != 200:
-				print('ERROR: status code {} returned for {} metadata'.format(metadata_request.status_code, package_name))
-				continue
+# prep package_names directory
+# assign packages to nodes
+print('Assigning packages to nodes...', flush=True)
+os.system('rm -rf package_names')
+os.mkdir('package_names')
 
-			metadata = metadata_request.json()
-			latest_version = metadata['dist-tags']['latest']
-			source_code_url = metadata['versions'][latest_version]['dist']['tarball']
+for node in nodes_cores:
+	f = open('package_names/{}'.format(node), 'w')
+	for p in range(packages_per_node):
+		f.write('{}\n'.format(all_packages.pop()))
+		if len(all_packages) == 0:
+			break
+	f.close()
 
-			source_code_request = requests.get(source_code_url)
+# write batch_job.sh file
+print('Generating job.sh...', flush=True)
+f = open('job.sh', 'w')
 
-			if source_code_request.status_code != 200:
-				print('ERROR: status code {} returned for {} source code'.format(source_code_request, package_name))
-				continue
+f.write('#!/bin/bash\n')
+f.write('\n')
+f.write('#SBATCH -N {}\n'.format(len(nodes_cores)))
+f.write('#SBATCH -n {}\n'.format(len(nodes_cores)))
+f.write('#SBATCH -c {}\n'.format(total_cores))
+f.write('#SBATCH -t 48:00:00\n')
+f.write('#SBATCH --mem-per-cpu=4096\n')
+f.write('#SBATCH -J npm-download\n')
+f.write('#SBATCH -o slurm-%j.out\n')
+f.write('\n')
 
-			if not os.path.exists('{}/{}'.format(storage_dir, dir_name)):
-				os.mkdir('{}/{}'.format(storage_dir, dir_name))
+for node in nodes_cores:
+	f.write('srun -N1 -n1 -c{} -w {} --exclusive python3 package_downloader.py {} {} &\n'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
-			source_code_path = '{}/{}/{}.tgz'.format(storage_dir, dir_name, latest_version)
-			with open(source_code_path, 'wb') as f:
-				f.write(source_code_request.content)
+f.write('wait\n')
 
-		except:
-			print('ERROR: unhandled exception when processing {}'.format(package_name))
+f.close()
 
-def chunks(l, n):
-	for i in range(0, len(l), n):
-		yield l[i:i + n]
-
-threads = []
-all_chunks = chunks(all_package_names, int(len(all_package_names) / n_threads) + 1)
-
-for i in range(n_threads):
-	chunk = next(all_chunks)
-	t = threading.Thread(target=download_packages, args=(chunk,))
-	t.start()
-	threads.append(t)
-
-for t in threads:
-	t.join()
+os.system('sbatch job.sh')
+print('Job started')
