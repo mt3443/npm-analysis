@@ -18,6 +18,7 @@ volatile_dir = '/volatile/m139t745'
 
 all_packages = open('{}/package_names/{}'.format(network_dir, script_id), 'r').readlines()
 lock = threading.Lock()
+log_file = open('{}/output/{}'.format(network_dir, script_id), 'w')
 
 install_scripts = ['preinstall', 'install', 'postinstall', 'preuninstall', 'uninstall', 'postuninstall']
 
@@ -26,7 +27,6 @@ install_scripts = ['preinstall', 'install', 'postinstall', 'preuninstall', 'unin
 def main():
     init()
     threads = []
-    log_file = open('{}/output/{}'.format(network_dir, script_id), 'w')
     all_chunks = chunks(all_packages, int(len(all_packages) / n_threads) + 1)
 
     for i in range(n_threads):
@@ -96,14 +96,14 @@ def thread_start(packages, thread_id):
 
             # run tests, record results
             metadata = json.load(open('{}/package.json'.format(package_dir_name), 'r'))
-            row = metadata.name + ',' + metadata.version + ','
+            row = metadata['name'] + ',' + metadata['version'] + ','
 
             row += has_scripts(metadata) + ','
             row += has_install_scripts(metadata) + ','
             row += dangerous_install_scripts(metadata) + ','
-            row += len(js_files) + ','
+            row += str(len(js_files)) + ','
 
-            jast_output = jast(js_files, dir_name)
+            jast_output = jast(js_files, dir_name, thread_id)
             # save jast output for these packages
             if jast_output == 'malicious':
                 possibly_malicious = True
@@ -119,8 +119,9 @@ def thread_start(packages, thread_id):
             else:
                 os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
 
-        except:
-            print('ERROR: unhandled exception when processing {}'.format(package_name))
+        except Exception as e:
+            # print('ERROR: unhandled exception when processing {}'.format(package_name))
+            print(e)
             continue
 
 
@@ -157,8 +158,9 @@ def dangerous_install_scripts(metadata):
 # Searches for malicious syntax using jast
 # param: js_files, list of javascript files to scan
 # param: dir_name, where to save jast output file
+# param: thread_id, thread identifier used to indicate which jast model to use
 # return: string, 'malicious' or 'benign'
-def jast(js_files, dir_name):
+def jast(js_files, dir_name, thread_id):
     if len(js_files) == 0:
         return 'benign'
 
