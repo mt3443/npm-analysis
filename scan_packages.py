@@ -73,7 +73,6 @@ def thread_start(packages, thread_id):
     for package in packages:
 
         try:
-            possibly_malicious = False
             dir_name = package[:-1]
             package_name = dir_name.replace('~', '/')
 
@@ -95,6 +94,8 @@ def thread_start(packages, thread_id):
             js_files = open('{}/packages_temp/{}/js_files'.format(working_dir, dir_name), 'r').readlines()
 
             # run tests, record results
+            jast_output = jast(js_files, dir_name, thread_id)
+
             metadata = json.load(open('{}/package.json'.format(package_dir_name), 'r'))
             row = metadata['name'] + ',' + metadata['version'] + ','
 
@@ -102,18 +103,12 @@ def thread_start(packages, thread_id):
             row += has_install_scripts(metadata) + ','
             row += dangerous_install_scripts(metadata) + ','
             row += str(len(js_files)) + ','
-
-            jast_output = jast(js_files, dir_name, thread_id)
-            # save jast output for these packages
-            if jast_output == 'malicious':
-                possibly_malicious = True
-
             row += jast_output + ','
             row += calls_dangerous_functions(js_files)
 
             log(row)
 
-            if possibly_malicious:
+            if jast_output == 'malicious':
                 os.system('rm -rf {}'.format(package_dir_name))
                 os.system('mv {}/packages_temp/{} {}/malicious_packages'.format(working_dir, dir_name, network_dir))
             else:

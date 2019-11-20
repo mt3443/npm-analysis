@@ -13,4 +13,4 @@ def get_called_functions(js_files):
         except CalledProcessError as e:
             continue
 
-    return list(all_functions)
+    return all_functions
