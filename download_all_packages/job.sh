@@ -1,141 +1,51 @@
 #!/bin/bash
 
-#SBATCH -N 130
-#SBATCH -n 130
-#SBATCH -c 1072
+#SBATCH -N 40
+#SBATCH -n 40
+#SBATCH -c 2
 #SBATCH -t 48:00:00
-#SBATCH --mem-per-cpu=4096
+#SBATCH --mem-per-cpu=2G
 #SBATCH -J npm-download
 #SBATCH -o slurm-%j.out
 
-srun -N1 -n1 -c8 -w l000 --exclusive python3 package_downloader.py l000 8 &
-srun -N1 -n1 -c8 -w l001 --exclusive python3 package_downloader.py l001 8 &
-srun -N1 -n1 -c8 -w l002 --exclusive python3 package_downloader.py l002 8 &
-srun -N1 -n1 -c8 -w l003 --exclusive python3 package_downloader.py l003 8 &
-srun -N1 -n1 -c8 -w l004 --exclusive python3 package_downloader.py l004 8 &
-srun -N1 -n1 -c8 -w l005 --exclusive python3 package_downloader.py l005 8 &
-srun -N1 -n1 -c8 -w l006 --exclusive python3 package_downloader.py l006 8 &
-srun -N1 -n1 -c8 -w l007 --exclusive python3 package_downloader.py l007 8 &
-srun -N1 -n1 -c8 -w l008 --exclusive python3 package_downloader.py l008 8 &
-srun -N1 -n1 -c8 -w l009 --exclusive python3 package_downloader.py l009 8 &
-srun -N1 -n1 -c8 -w l010 --exclusive python3 package_downloader.py l010 8 &
-srun -N1 -n1 -c8 -w l011 --exclusive python3 package_downloader.py l011 8 &
-srun -N1 -n1 -c8 -w l012 --exclusive python3 package_downloader.py l012 8 &
-srun -N1 -n1 -c8 -w l013 --exclusive python3 package_downloader.py l013 8 &
-srun -N1 -n1 -c8 -w l014 --exclusive python3 package_downloader.py l014 8 &
-srun -N1 -n1 -c8 -w l015 --exclusive python3 package_downloader.py l015 8 &
-srun -N1 -n1 -c8 -w l016 --exclusive python3 package_downloader.py l016 8 &
-srun -N1 -n1 -c8 -w l017 --exclusive python3 package_downloader.py l017 8 &
-srun -N1 -n1 -c8 -w l018 --exclusive python3 package_downloader.py l018 8 &
-srun -N1 -n1 -c8 -w l019 --exclusive python3 package_downloader.py l019 8 &
-srun -N1 -n1 -c8 -w l020 --exclusive python3 package_downloader.py l020 8 &
-srun -N1 -n1 -c8 -w l021 --exclusive python3 package_downloader.py l021 8 &
-srun -N1 -n1 -c8 -w l022 --exclusive python3 package_downloader.py l022 8 &
-srun -N1 -n1 -c8 -w l023 --exclusive python3 package_downloader.py l023 8 &
-srun -N1 -n1 -c8 -w l024 --exclusive python3 package_downloader.py l024 8 &
-srun -N1 -n1 -c8 -w l025 --exclusive python3 package_downloader.py l025 8 &
-srun -N1 -n1 -c8 -w l026 --exclusive python3 package_downloader.py l026 8 &
-srun -N1 -n1 -c8 -w l027 --exclusive python3 package_downloader.py l027 8 &
-srun -N1 -n1 -c8 -w l028 --exclusive python3 package_downloader.py l028 8 &
-srun -N1 -n1 -c8 -w l029 --exclusive python3 package_downloader.py l029 8 &
-srun -N1 -n1 -c8 -w l030 --exclusive python3 package_downloader.py l030 8 &
-srun -N1 -n1 -c8 -w l031 --exclusive python3 package_downloader.py l031 8 &
-srun -N1 -n1 -c8 -w l032 --exclusive python3 package_downloader.py l032 8 &
-srun -N1 -n1 -c8 -w l033 --exclusive python3 package_downloader.py l033 8 &
-srun -N1 -n1 -c8 -w l034 --exclusive python3 package_downloader.py l034 8 &
-srun -N1 -n1 -c8 -w l035 --exclusive python3 package_downloader.py l035 8 &
-srun -N1 -n1 -c8 -w l036 --exclusive python3 package_downloader.py l036 8 &
-srun -N1 -n1 -c8 -w l037 --exclusive python3 package_downloader.py l037 8 &
-srun -N1 -n1 -c8 -w l038 --exclusive python3 package_downloader.py l038 8 &
-srun -N1 -n1 -c8 -w l039 --exclusive python3 package_downloader.py l039 8 &
-srun -N1 -n1 -c8 -w l040 --exclusive python3 package_downloader.py l040 8 &
-srun -N1 -n1 -c8 -w l041 --exclusive python3 package_downloader.py l041 8 &
-srun -N1 -n1 -c8 -w l042 --exclusive python3 package_downloader.py l042 8 &
-srun -N1 -n1 -c8 -w l043 --exclusive python3 package_downloader.py l043 8 &
-srun -N1 -n1 -c8 -w l044 --exclusive python3 package_downloader.py l044 8 &
-srun -N1 -n1 -c8 -w l045 --exclusive python3 package_downloader.py l045 8 &
-srun -N1 -n1 -c8 -w l046 --exclusive python3 package_downloader.py l046 8 &
-srun -N1 -n1 -c8 -w l047 --exclusive python3 package_downloader.py l047 8 &
-srun -N1 -n1 -c8 -w l048 --exclusive python3 package_downloader.py l048 8 &
-srun -N1 -n1 -c8 -w l049 --exclusive python3 package_downloader.py l049 8 &
-srun -N1 -n1 -c8 -w l050 --exclusive python3 package_downloader.py l050 8 &
-srun -N1 -n1 -c8 -w l051 --exclusive python3 package_downloader.py l051 8 &
-srun -N1 -n1 -c8 -w l052 --exclusive python3 package_downloader.py l052 8 &
-srun -N1 -n1 -c8 -w l053 --exclusive python3 package_downloader.py l053 8 &
-srun -N1 -n1 -c8 -w l054 --exclusive python3 package_downloader.py l054 8 &
-srun -N1 -n1 -c8 -w l055 --exclusive python3 package_downloader.py l055 8 &
-srun -N1 -n1 -c8 -w l056 --exclusive python3 package_downloader.py l056 8 &
-srun -N1 -n1 -c8 -w l057 --exclusive python3 package_downloader.py l057 8 &
-srun -N1 -n1 -c8 -w l058 --exclusive python3 package_downloader.py l058 8 &
-srun -N1 -n1 -c16 -w m001 --exclusive python3 package_downloader.py m001 16 &
-srun -N1 -n1 -c16 -w m002 --exclusive python3 package_downloader.py m002 16 &
-srun -N1 -n1 -c16 -w m011 --exclusive python3 package_downloader.py m011 16 &
-srun -N1 -n1 -c16 -w m012 --exclusive python3 package_downloader.py m012 16 &
-srun -N1 -n1 -c8 -w n013 --exclusive python3 package_downloader.py n013 8 &
-srun -N1 -n1 -c8 -w n014 --exclusive python3 package_downloader.py n014 8 &
-srun -N1 -n1 -c8 -w n015 --exclusive python3 package_downloader.py n015 8 &
-srun -N1 -n1 -c8 -w n016 --exclusive python3 package_downloader.py n016 8 &
-srun -N1 -n1 -c8 -w n017 --exclusive python3 package_downloader.py n017 8 &
-srun -N1 -n1 -c8 -w n018 --exclusive python3 package_downloader.py n018 8 &
-srun -N1 -n1 -c8 -w n019 --exclusive python3 package_downloader.py n019 8 &
-srun -N1 -n1 -c8 -w n020 --exclusive python3 package_downloader.py n020 8 &
-srun -N1 -n1 -c8 -w n021 --exclusive python3 package_downloader.py n021 8 &
-srun -N1 -n1 -c8 -w n022 --exclusive python3 package_downloader.py n022 8 &
-srun -N1 -n1 -c8 -w n023 --exclusive python3 package_downloader.py n023 8 &
-srun -N1 -n1 -c8 -w n024 --exclusive python3 package_downloader.py n024 8 &
-srun -N1 -n1 -c8 -w n025 --exclusive python3 package_downloader.py n025 8 &
-srun -N1 -n1 -c8 -w n026 --exclusive python3 package_downloader.py n026 8 &
-srun -N1 -n1 -c8 -w n027 --exclusive python3 package_downloader.py n027 8 &
-srun -N1 -n1 -c8 -w n028 --exclusive python3 package_downloader.py n028 8 &
-srun -N1 -n1 -c8 -w n029 --exclusive python3 package_downloader.py n029 8 &
-srun -N1 -n1 -c8 -w n030 --exclusive python3 package_downloader.py n030 8 &
-srun -N1 -n1 -c8 -w n031 --exclusive python3 package_downloader.py n031 8 &
-srun -N1 -n1 -c8 -w n032 --exclusive python3 package_downloader.py n032 8 &
-srun -N1 -n1 -c8 -w n033 --exclusive python3 package_downloader.py n033 8 &
-srun -N1 -n1 -c8 -w n034 --exclusive python3 package_downloader.py n034 8 &
-srun -N1 -n1 -c8 -w n035 --exclusive python3 package_downloader.py n035 8 &
-srun -N1 -n1 -c8 -w n036 --exclusive python3 package_downloader.py n036 8 &
-srun -N1 -n1 -c8 -w n037 --exclusive python3 package_downloader.py n037 8 &
-srun -N1 -n1 -c8 -w n038 --exclusive python3 package_downloader.py n038 8 &
-srun -N1 -n1 -c8 -w n039 --exclusive python3 package_downloader.py n039 8 &
-srun -N1 -n1 -c8 -w n040 --exclusive python3 package_downloader.py n040 8 &
-srun -N1 -n1 -c8 -w n041 --exclusive python3 package_downloader.py n041 8 &
-srun -N1 -n1 -c8 -w n042 --exclusive python3 package_downloader.py n042 8 &
-srun -N1 -n1 -c8 -w n043 --exclusive python3 package_downloader.py n043 8 &
-srun -N1 -n1 -c8 -w n044 --exclusive python3 package_downloader.py n044 8 &
-srun -N1 -n1 -c8 -w n045 --exclusive python3 package_downloader.py n045 8 &
-srun -N1 -n1 -c8 -w n046 --exclusive python3 package_downloader.py n046 8 &
-srun -N1 -n1 -c8 -w n047 --exclusive python3 package_downloader.py n047 8 &
-srun -N1 -n1 -c8 -w n048 --exclusive python3 package_downloader.py n048 8 &
-srun -N1 -n1 -c8 -w n049 --exclusive python3 package_downloader.py n049 8 &
-srun -N1 -n1 -c8 -w n050 --exclusive python3 package_downloader.py n050 8 &
-srun -N1 -n1 -c8 -w n051 --exclusive python3 package_downloader.py n051 8 &
-srun -N1 -n1 -c8 -w n052 --exclusive python3 package_downloader.py n052 8 &
-srun -N1 -n1 -c8 -w n053 --exclusive python3 package_downloader.py n053 8 &
-srun -N1 -n1 -c8 -w n054 --exclusive python3 package_downloader.py n054 8 &
-srun -N1 -n1 -c8 -w n055 --exclusive python3 package_downloader.py n055 8 &
-srun -N1 -n1 -c8 -w n056 --exclusive python3 package_downloader.py n056 8 &
-srun -N1 -n1 -c8 -w n057 --exclusive python3 package_downloader.py n057 8 &
-srun -N1 -n1 -c8 -w n058 --exclusive python3 package_downloader.py n058 8 &
-srun -N1 -n1 -c8 -w n059 --exclusive python3 package_downloader.py n059 8 &
-srun -N1 -n1 -c8 -w n060 --exclusive python3 package_downloader.py n060 8 &
-srun -N1 -n1 -c8 -w n061 --exclusive python3 package_downloader.py n061 8 &
-srun -N1 -n1 -c8 -w n062 --exclusive python3 package_downloader.py n062 8 &
-srun -N1 -n1 -c8 -w n063 --exclusive python3 package_downloader.py n063 8 &
-srun -N1 -n1 -c8 -w n064 --exclusive python3 package_downloader.py n064 8 &
-srun -N1 -n1 -c8 -w n081 --exclusive python3 package_downloader.py n081 8 &
-srun -N1 -n1 -c8 -w n082 --exclusive python3 package_downloader.py n082 8 &
-srun -N1 -n1 -c8 -w n083 --exclusive python3 package_downloader.py n083 8 &
-srun -N1 -n1 -c8 -w n084 --exclusive python3 package_downloader.py n084 8 &
-srun -N1 -n1 -c8 -w n085 --exclusive python3 package_downloader.py n085 8 &
-srun -N1 -n1 -c8 -w n086 --exclusive python3 package_downloader.py n086 8 &
-srun -N1 -n1 -c8 -w n087 --exclusive python3 package_downloader.py n087 8 &
-srun -N1 -n1 -c8 -w n088 --exclusive python3 package_downloader.py n088 8 &
-srun -N1 -n1 -c8 -w n089 --exclusive python3 package_downloader.py n089 8 &
-srun -N1 -n1 -c8 -w n090 --exclusive python3 package_downloader.py n090 8 &
-srun -N1 -n1 -c8 -w n091 --exclusive python3 package_downloader.py n091 8 &
-srun -N1 -n1 -c8 -w n092 --exclusive python3 package_downloader.py n092 8 &
-srun -N1 -n1 -c8 -w n111 --exclusive python3 package_downloader.py n111 8 &
-srun -N1 -n1 -c8 -w n112 --exclusive python3 package_downloader.py n112 8 &
-srun -N1 -n1 -c8 -w n113 --exclusive python3 package_downloader.py n113 8 &
+srun -N1 -n1 -c2 -w l000 python3 package_downloader.py l000 2 &
+srun -N1 -n1 -c2 -w l001 python3 package_downloader.py l001 2 &
+srun -N1 -n1 -c2 -w l002 python3 package_downloader.py l002 2 &
+srun -N1 -n1 -c2 -w l003 python3 package_downloader.py l003 2 &
+srun -N1 -n1 -c2 -w l004 python3 package_downloader.py l004 2 &
+srun -N1 -n1 -c2 -w l005 python3 package_downloader.py l005 2 &
+srun -N1 -n1 -c2 -w l006 python3 package_downloader.py l006 2 &
+srun -N1 -n1 -c2 -w l007 python3 package_downloader.py l007 2 &
+srun -N1 -n1 -c2 -w l008 python3 package_downloader.py l008 2 &
+srun -N1 -n1 -c2 -w l009 python3 package_downloader.py l009 2 &
+srun -N1 -n1 -c2 -w l010 python3 package_downloader.py l010 2 &
+srun -N1 -n1 -c2 -w l011 python3 package_downloader.py l011 2 &
+srun -N1 -n1 -c2 -w l012 python3 package_downloader.py l012 2 &
+srun -N1 -n1 -c2 -w l013 python3 package_downloader.py l013 2 &
+srun -N1 -n1 -c2 -w l014 python3 package_downloader.py l014 2 &
+srun -N1 -n1 -c2 -w l015 python3 package_downloader.py l015 2 &
+srun -N1 -n1 -c2 -w l016 python3 package_downloader.py l016 2 &
+srun -N1 -n1 -c2 -w l017 python3 package_downloader.py l017 2 &
+srun -N1 -n1 -c2 -w l018 python3 package_downloader.py l018 2 &
+srun -N1 -n1 -c2 -w l019 python3 package_downloader.py l019 2 &
+srun -N1 -n1 -c2 -w l020 python3 package_downloader.py l020 2 &
+srun -N1 -n1 -c2 -w l021 python3 package_downloader.py l021 2 &
+srun -N1 -n1 -c2 -w l022 python3 package_downloader.py l022 2 &
+srun -N1 -n1 -c2 -w l023 python3 package_downloader.py l023 2 &
+srun -N1 -n1 -c2 -w l024 python3 package_downloader.py l024 2 &
+srun -N1 -n1 -c2 -w l025 python3 package_downloader.py l025 2 &
+srun -N1 -n1 -c2 -w l026 python3 package_downloader.py l026 2 &
+srun -N1 -n1 -c2 -w l027 python3 package_downloader.py l027 2 &
+srun -N1 -n1 -c2 -w l028 python3 package_downloader.py l028 2 &
+srun -N1 -n1 -c2 -w l029 python3 package_downloader.py l029 2 &
+srun -N1 -n1 -c2 -w l030 python3 package_downloader.py l030 2 &
+srun -N1 -n1 -c2 -w l031 python3 package_downloader.py l031 2 &
+srun -N1 -n1 -c2 -w l032 python3 package_downloader.py l032 2 &
+srun -N1 -n1 -c2 -w l033 python3 package_downloader.py l033 2 &
+srun -N1 -n1 -c2 -w l034 python3 package_downloader.py l034 2 &
+srun -N1 -n1 -c2 -w l035 python3 package_downloader.py l035 2 &
+srun -N1 -n1 -c2 -w l036 python3 package_downloader.py l036 2 &
+srun -N1 -n1 -c2 -w l037 python3 package_downloader.py l037 2 &
+srun -N1 -n1 -c2 -w l038 python3 package_downloader.py l038 2 &
+srun -N1 -n1 -c2 -w l039 python3 package_downloader.py l039 2 &
 wait
