@@ -162,7 +162,7 @@ def jast(js_files, dir_name, thread_id):
 
     # run jast on all files in js_files list
     for js_file in js_files:
-        os.system('python3 {}/jast_models/{}/clustering/classifier.py --v 5 --m {}/jast_models/{}/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, thread_id, working_dir, thread_id, js_file[:-1], working_dir, dir_name))
+        os.system('python3 {}/jast_models/{}/clustering/classifier.py --v 5 --th 0.1 --m {}/jast_models/{}/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, thread_id, working_dir, thread_id, js_file[:-1], working_dir, dir_name))
 
     # get number of files classified as malicious
     result = subprocess.check_output('grep ": malicious" {}/packages_temp/{}/jast_output | wc -l'.format(working_dir, dir_name), shell=True)
