@@ -1,5 +1,7 @@
 data/benign_source
 data/malicious_source
+data/jast_training/test
+data/jast_training/train
 node_modules
 output
 package_names
