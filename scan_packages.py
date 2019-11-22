@@ -3,14 +3,13 @@ import subprocess
 import threading
 import sys
 import json
-from dangerous import *
 from get_called_functions import get_called_functions
 
 # Globals
 script_id = sys.argv[1]
-n_threads = int(sys.argv[2])
+n_threads = 2
 
-column_headers = 'package_name,version,has_scripts,has_install_scripts,dangerous_install_scripts,n_js_files,jast_result,calls_dangerous_functions'
+column_headers = 'package_name,version,has_scripts,has_install_scripts,curl_in_install_scripts,wget_in_install_scripts,rm_in_install_scripts,n_js_files,jast_result,calls_eval'
 
 working_dir = '/dev/shm/npm_{}'.format(script_id)
 network_dir = '/users/m139t745/npm-analysis'
@@ -101,10 +100,12 @@ def thread_start(packages, thread_id):
 
             row += has_scripts(metadata) + ','
             row += has_install_scripts(metadata) + ','
-            row += dangerous_install_scripts(metadata) + ','
+            row += command_in_install_scripts(metadata, 'curl') + ','
+            row += command_in_install_scripts(metadata, 'wget') + ','
+            row += command_in_install_scripts(metadata, 'rm') + ','
             row += str(len(js_files)) + ','
             row += jast_output + ','
-            row += calls_dangerous_functions(js_files)
+            row += calls_eval(js_files)
 
             log(row)
 
@@ -135,7 +136,7 @@ def has_install_scripts(metadata):
     return 'no'
 
 
-def dangerous_install_scripts(metadata):
+def command_in_install_scripts(metadata, command):
     if 'scripts' not in metadata:
         return 'no'
 
@@ -144,7 +145,7 @@ def dangerous_install_scripts(metadata):
             parts = metadata['scripts'][script].split()
 
             for part in parts:
-                if part in dangerous_commands:
+                if part == command:
                     return 'yes'
 
     return 'no'
@@ -173,11 +174,11 @@ def jast(js_files, dir_name, thread_id):
         return 'malicious'
 
 
-def calls_dangerous_functions(js_files):
+def calls_eval(js_files):
     called_functions = get_called_functions(js_files)
 
     for function in called_functions:
-        if function in dangerous_functions:
+        if function == 'eval':
             return 'yes'
 
     return 'no'

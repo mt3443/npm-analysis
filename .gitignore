@@ -5,3 +5,6 @@ output
 package_names
 package-lock.json
 __pycache__
+*.pyc
+errors
+*.log
