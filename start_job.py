@@ -53,6 +53,12 @@ os.mkdir('package_names')
 if not os.path.isdir('errors'):
     os.mkdir('errors')
 
+if not os.path.isdir('output'):
+    os.mkdir('output')
+
+if not os.path.isdir('malicious_packages'):
+    os.mkdir('malicious_packages')
+
 for node in nodes_cores:
     f = open('package_names/{}'.format(node), 'w')
     for p in range(int(nodes_cores[node]) * packages_per_core):

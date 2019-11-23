@@ -16,6 +16,10 @@ def thread_start(packages):
     for package in packages:
         try:
             package_name = package[:-1]
+
+            if '*' in package_name:
+                continue
+
             dir_name = package_name.replace('/', '~')
             metadata_request = requests.get('https://registry.npmjs.org/{}'.format(package_name))
 
