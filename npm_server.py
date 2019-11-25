@@ -14,7 +14,7 @@ server_socket.listen(100)
 while True:
 
     # listen for any messages from clients
-    connection_socket, addr = socket_server.accept()
+    connection_socket, addr = server_socket.accept()
     message = connection_socket.recv(buffer_size).decode('utf8')
     
     # if client is requesting a new package

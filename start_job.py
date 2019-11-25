@@ -1,5 +1,6 @@
 import os
 import re
+import time
 
 print('Getting node info...', flush=True)
 os.system('scontrol show node > node_info')
@@ -35,21 +36,6 @@ for node in unused_nodes:
     nodes_cores[name] = n_cores
     total_cores += int(n_cores)
 
-# get all package names
-print('Getting package names...', flush=True)
-packages_dir = '/volatile/m139t745/npm-packages'
-all_packages = [f for f in os.listdir(packages_dir)]
-total_packages = len(all_packages)
-
-# divide packages equally among number of cores
-packages_per_core = int(total_packages / total_cores) + 1
-
-# prep package_names directory
-# assign packages to cores
-print('Assigning packages to cores...', flush=True)
-os.system('rm -rf package_names')
-os.mkdir('package_names')
-
 if not os.path.isdir('errors'):
     os.mkdir('errors')
 
@@ -59,15 +45,14 @@ if not os.path.isdir('output'):
 if not os.path.isdir('malicious_packages'):
     os.mkdir('malicious_packages')
 
-for node in nodes_cores:
-    f = open('package_names/{}'.format(node), 'w')
-    for p in range(int(nodes_cores[node]) * packages_per_core):
-        f.write('{}\n'.format(all_packages.pop()))
-        if len(all_packages) == 0:
-            break
-    f.close()
+# start server
+os.system('srun -N1 -n 1 -c 1 -w g016 python3 npm_server.py &')
 
+# wait for server to initialize
+time.sleep(60)
+
+# start clients
 for node in nodes_cores:
-    os.system('srun -N 1 -n 1 -c {} -w {} -e errors/{} python3 scan_packages.py {} {} &'.format(nodes_cores[node], node, node, node, nodes_cores[node]))
+    os.system('srun -N 1 -n 1 -c {} -w {} python3 npm_client.py {} &'.format(nodes_cores[node], node, node))
 
 print('Job started')

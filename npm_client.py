@@ -8,7 +8,7 @@ from socket import socket, AF_INET, SOCK_STREAM
 script_id = sys.argv[1]
 
 port = 3443
-server_ip = ''
+server_ip = '10.123.131.77'
 buffer_size = 1024
 
 column_headers = 'package_name,version,has_scripts,has_install_scripts,curl_in_install_scripts,wget_in_install_scripts,rm_in_install_scripts,n_js_files,jast_result,eval_calls,networking_calls'
@@ -50,7 +50,7 @@ def start_worker():
         client_socket = socket(AF_INET, SOCK_STREAM)
         client_socket.connect((server_ip, port))
         client_socket.send(message.encode('utf8'))
-        response = clinet_socket.recv(buffer_size).decode('utf8')
+        response = client_socket.recv(buffer_size).decode('utf8')
         client_socket.close()
 
         if response == 'no packages remaining':
