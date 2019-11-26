@@ -172,7 +172,7 @@ def typosquatting(package_name):
     candidates = []
 
     for p in popular_packages:
-        if editdistance.eval(package_name, p) == 2:
+        if editdistance.eval(package_name, p) == 1:
             candidates.append(p)
 			
     if len(candidates) == 0:
