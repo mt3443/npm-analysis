@@ -40,7 +40,7 @@ install_scripts = ['preinstall', 'install', 'postinstall', 'preuninstall', 'unin
 networking_functions = ['get', 'put', 'post', 'then', 'fetch', 'encodeURIComponent', 'unescape']
 
 df = pd.read_csv('data/downloads.csv', na_filter=False)
-popular_packages = list(df.loc[df['weekly_downloads'] > 10000]['package_name'].values)
+popular_packages = set(df.loc[df['weekly_downloads'] > 10000]['package_name'].values)
 
 today = datetime.datetime.today()
 
@@ -166,11 +166,19 @@ def new_package(times):
 
 
 def typosquatting(package_name):
-    for p in popular_packages:
-        if editdistance.eval(package_name, p) == 1:
-            return ('yes', p)
+    if package_name in popular_packages:
+        return ('no', 'N/A')
 
-    return ('no', 'N/A')
+    candidates = []
+
+    for p in popular_packages:
+        if editdistance.eval(package_name, p) == 2:
+            candidates.append(p)
+			
+    if len(candidates) == 0:
+        return ('no', 'N/A')
+    else:
+        return ('yes', '|'.join(candidates))
 
 
 def has_scripts(metadata):
