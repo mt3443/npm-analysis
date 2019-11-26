@@ -2,6 +2,9 @@ import os
 import subprocess
 import json
 import sys
+import editdistance
+import datetime
+import pandas as pd
 from get_called_functions import get_called_functions
 from socket import socket, AF_INET, SOCK_STREAM
 
@@ -11,7 +14,20 @@ port = 3443
 server_ip = '10.123.131.77'
 buffer_size = 1024
 
-column_headers = 'package_name,version,has_scripts,has_install_scripts,curl_in_install_scripts,wget_in_install_scripts,rm_in_install_scripts,n_js_files,jast_result,eval_calls,networking_calls'
+column_headers = """package_name,
+                    version,
+                    has_scripts,
+                    has_install_scripts,
+                    curl_in_install_scripts,
+                    wget_in_install_scripts,
+                    rm_in_install_scripts,
+                    n_js_files,
+                    jast_result,
+                    eval_calls,
+                    networking_calls,
+                    new_package_1_week,
+                    possibly_typosquatting,
+                    typosquatting_target"""
 
 working_dir = '/dev/shm/npm_{}'.format(script_id)
 network_dir = '/users/m139t745/npm-analysis'
@@ -22,6 +38,11 @@ error_file = open('{}/errors/{}'.format(network_dir, script_id), 'w')
 
 install_scripts = ['preinstall', 'install', 'postinstall', 'preuninstall', 'uninstall', 'postuninstall']
 networking_functions = ['get', 'put', 'post', 'then', 'fetch', 'encodeURIComponent', 'unescape']
+
+df = pd.read_csv('data/downloads.csv', na_filter=False)
+popular_packages = list(df.loc[df['weekly_downloads'] > 10000]['package_name'].values)
+
+today = datetime.datetime.today()
 
 
 # General setup. Creates directories, files, etc. needed for analysis
@@ -37,10 +58,8 @@ def init():
 
 
 def log(message):
-    lock.acquire()
     log_file.write(message + '\n')
     log_file.flush()
-    lock.release()
 
 
 def start_worker():
@@ -53,8 +72,15 @@ def start_worker():
         response = client_socket.recv(buffer_size).decode('utf8')
         client_socket.close()
 
+        # debugging line 1
+        log(response)
+
         if response == 'no packages remaining':
+            os.system('rm -rf {}'.format(working_dir))
             exit()
+
+        # debugging line 2
+        continue
 
         try:
             dir_name = response
@@ -79,7 +105,7 @@ def start_worker():
 
             # find package.json
             package_json_path = ''
-            for root, dirs, files in os.walk('{}/packages_temp/{}'.format(working_dir, dir_name)):
+            for _, _, files in os.walk('{}/packages_temp/{}'.format(working_dir, dir_name)):
                 for f in files:
                     if f == 'package.json':
                         package_json_path = os.path.join('{}/packages_temp/{}'.format(working_dir, dir_name), f)
@@ -101,12 +127,18 @@ def start_worker():
             called_functions = get_called_functions(js_files)
 
             row += eval_calls(called_functions) + ','
-            row += networking_calls(called_functions)
+            row += networking_calls(called_functions) + ','
+
+            row += new_package(metadata['time'])
+
+            typosquatting_result = typosquatting(package_name)
+
+            row += typosquatting_result[0] + ','
+            row += typosquatting_result[1] + ','
 
             log(row)
 
             if jast_output == 'malicious':
-                os.system('rm -rf {}'.format(package_dir_name))
                 os.system('mv {}/packages_temp/{} {}/malicious_packages'.format(working_dir, dir_name, network_dir))
             else:
                 os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
@@ -114,6 +146,31 @@ def start_worker():
         except Exception as e:
             error_file.write('{}\n'.format(e))
             error_file.flush()
+
+
+def new_package(times):
+    earliest_release = ''
+    for time in times:
+        if time == 'created' or time == 'modified' or time == '0.0.1-security':
+            continue
+
+        if earliest_release == '' or times[time] < earliest_release:
+            earliest_release = times[time]
+
+    d = datetime.datetime.strptime(earliest_release.split('T')[0], '%Y-%m-%d')
+
+    if (today - d).days < 7:
+        return 'yes'
+    else:
+        return 'no'
+
+
+def typosquatting(package_name):
+    for p in popular_packages:
+        if editdistance.eval(package_name, p) == 1:
+            return ('yes', p)
+
+    return ('no', 'N/A')
 
 
 def has_scripts(metadata):
@@ -156,7 +213,7 @@ def jast(js_files, dir_name):
 
     # run jast on all files in js_files list
     for js_file in js_files:
-        os.system('python3 {}/jast/clustering/classifier.py --v 5 --th 0.1 --m {}/jast/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, thread_id, working_dir, thread_id, js_file[:-1], working_dir, dir_name))
+        os.system('python3 {}/jast/clustering/classifier.py --v 5 --th 0.1 --m {}/jast/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, working_dir, js_file[:-1], working_dir, dir_name))
 
     # get number of files classified as malicious
     result = subprocess.check_output('grep ": malicious" {}/packages_temp/{}/jast_output | wc -l'.format(working_dir, dir_name), shell=True)
