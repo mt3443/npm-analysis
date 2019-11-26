@@ -17,7 +17,7 @@ all_packages = set(all_packages)
 
 
 print('Parsing already processed', flush=True)
-processed_packages = open('package_downloads.csv').readlines()
+processed_packages = open('downloads.csv').readlines()
 processed_packages = [x.split(',')[0] for x in processed_packages]
 
 print('Removing already processed', flush=True)
