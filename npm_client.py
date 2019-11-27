@@ -116,7 +116,7 @@ def start_worker():
             row += eval_calls(called_functions) + ','
             row += networking_calls(called_functions) + ','
 
-            row += new_package(metadata)
+            row += new_package(metadata) + ','
 
             typosquatting_result = typosquatting(package_name)
 
