@@ -72,15 +72,9 @@ def start_worker():
         response = client_socket.recv(buffer_size).decode('utf8')
         client_socket.close()
 
-        # debugging line 1
-        log(response)
-
         if response == 'no packages remaining':
             os.system('rm -rf {}'.format(working_dir))
             exit()
-
-        # debugging line 2
-        continue
 
         try:
             dir_name = response
