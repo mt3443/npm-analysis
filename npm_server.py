@@ -25,4 +25,4 @@ while True:
             response = package_names.pop(0)
 
         connection_socket.send(response.encode('utf8'))
-        connection_socket.close()
+    connection_socket.close()
