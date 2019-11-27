@@ -97,7 +97,8 @@ def start_worker():
             jast_output = jast(js_files, dir_name)
 
             # find package.json
-            package_json_path = subprocess.check_output('find {}/packages_temp/{} -type f -name "package.json"'.format(working_dir, dir_name), shell=True).decode('utf8')[:-1]
+            package_jsons = subprocess.check_output('find {}/packages_temp/{} -type f -name "package.json"'.format(working_dir, dir_name), shell=True).decode('utf8').split()
+            package_json_path = min(package_jsons, key=len)
 
             metadata = json.load(open(package_json_path, 'r'))
             row = metadata['name'] + ',' + metadata['version'] + ','
@@ -115,7 +116,7 @@ def start_worker():
             row += eval_calls(called_functions) + ','
             row += networking_calls(called_functions) + ','
 
-            row += new_package(metadata['time'])
+            row += new_package(metadata)
 
             typosquatting_result = typosquatting(package_name)
 
@@ -134,7 +135,13 @@ def start_worker():
             error_file.flush()
 
 
-def new_package(times):
+def new_package(metadata):
+
+    if 'time' not in metadata:
+        return 'no'
+
+    times = metadata['time']    
+
     earliest_release = ''
     for time in times:
         if time == 'created' or time == 'modified' or time == '0.0.1-security':
