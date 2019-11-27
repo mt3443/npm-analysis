@@ -130,8 +130,9 @@ def start_worker():
             else:
                 os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
 
-        except Exception as e:
-            error_file.write('{}\n'.format(e))
+        except:
+            error_file.write('Package: {}\n'.format(package_name))
+            error_file.write('{}\n'.format(sys.exc_info()[0]))
             error_file.flush()
 
 
