@@ -98,14 +98,7 @@ def start_worker():
             jast_output = jast(js_files, dir_name)
 
             # find package.json
-            package_json_path = ''
-            for _, _, files in os.walk('{}/packages_temp/{}'.format(working_dir, dir_name)):
-                for f in files:
-                    if f == 'package.json':
-                        package_json_path = os.path.join('{}/packages_temp/{}'.format(working_dir, dir_name), f)
-                        break
-                if package_json_path != '':
-                    break
+            package_json_path = subprocess.check_output('find {}/packages_temp/{} -type f -name "package.json"'.format(working_dir, dir_name), shell=True).decode('utf8')
 
             metadata = json.load(open(package_json_path, 'r'))
             row = metadata['name'] + ',' + metadata['version'] + ','
