@@ -47,14 +47,13 @@ today = datetime.datetime.today()
 
 # General setup. Creates directories, files, etc. needed for analysis
 def init():
-    if not os.path.exists(working_dir):
-        os.mkdir(working_dir)
+    if os.path.exists(working_dir):
+        os.system('chmod -R 777 {}'.format(working_dir))
+        os.system('rm -rf {}'.format(working_dir))
 
-    if not os.path.exists('{}/packages_temp'.format(working_dir)):
-        os.mkdir('{}/packages_temp'.format(working_dir))
-
-    if not os.path.exists('{}/jast'.format(working_dir)):
-        os.system('cp -r {}/jast {}'.format(network_dir, working_dir))
+    os.mkdir(working_dir)
+    os.mkdir('{}/packages_temp'.format(working_dir))
+    os.system('cp -r {}/jast {}'.format(network_dir, working_dir))
 
 
 def log(message):
