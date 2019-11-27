@@ -121,7 +121,7 @@ def start_worker():
             typosquatting_result = typosquatting(package_name)
 
             row += typosquatting_result[0] + ','
-            row += typosquatting_result[1] + ','
+            row += typosquatting_result[1]
 
             log(row)
 
