@@ -38,12 +38,18 @@ for node in unused_nodes:
 
 if not os.path.isdir('errors'):
     os.mkdir('errors')
+else:
+    os.system('rm -rf errors/*')
 
 if not os.path.isdir('output'):
     os.mkdir('output')
+else:
+    os.system('rm -rf output/*')
 
 if not os.path.isdir('malicious_packages'):
     os.mkdir('malicious_packages')
+else:
+    os.system('rm -rf malicious_pacakges/*')
 
 # start server
 os.system('srun -N1 -n 1 -c 1 -w g016 python3 npm_server.py &')
