@@ -26,8 +26,6 @@ for node in all_nodes:
 	if 'CPUAlloc=0' in node and 'NodeName=g' not in node:
 		unused_nodes.append(node)
 
-unused_nodes = unused_nodes[:50]
-
 del all_nodes
 
 total_cores = 0
@@ -76,27 +74,7 @@ for node in nodes_cores:
 			break
 	f.close()
 
-# write batch_job.sh file
-print('Generating job.sh...', flush=True)
-f = open('job.sh', 'w')
-
-f.write('#!/bin/bash\n')
-f.write('\n')
-f.write('#SBATCH -N {}\n'.format(len(nodes_cores)))
-f.write('#SBATCH -n {}\n'.format(len(nodes_cores)))
-f.write('#SBATCH -c 4\n')
-f.write('#SBATCH -t 48:00:00\n')
-f.write('#SBATCH --mem-per-cpu=2G\n')
-f.write('#SBATCH -J npm-download\n')
-f.write('#SBATCH -o slurm-%j.out\n')
-f.write('\n')
-
 for node in nodes_cores:
-    f.write('srun -N1 -n1 -c4 -w {} python3 package_downloader.py {} 4 &\n'.format(node, node))
+    os.system('srun -N1 -n1 -c4 -w {} python3 package_downloader.py {} 4 &\n'.format(node, node))
 
-f.write('wait\n')
-
-f.close()
-
-os.system('sbatch job.sh')
 print('Job started')

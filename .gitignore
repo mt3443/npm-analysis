@@ -9,4 +9,5 @@ package-lock.json
 __pycache__
 *.pyc
 errors
+malicious_packages
 *.log
