@@ -9,7 +9,7 @@ random.shuffle(package_names)
 
 server_socket = socket(AF_INET, SOCK_STREAM)
 server_socket.bind(('', port))
-server_socket.listen(200)
+server_socket.listen(1000)
 
 while True:
 

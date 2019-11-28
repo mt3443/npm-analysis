@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 import sys
+import threading
 import editdistance
 import datetime
 import pandas as pd
@@ -9,6 +10,7 @@ from get_called_functions import get_called_functions
 from socket import socket, AF_INET, SOCK_STREAM
 
 script_id = sys.argv[1]
+n_threads = 4
 
 port = 3443
 server_ip = '10.123.131.77'
@@ -36,6 +38,8 @@ volatile_dir = '/volatile/m139t745'
 log_file = open('{}/output/{}'.format(network_dir, script_id), 'w')
 error_file = open('{}/errors/{}'.format(network_dir, script_id), 'w')
 
+lock = threading.Lock()
+
 install_scripts = ['preinstall', 'install', 'postinstall', 'preuninstall', 'uninstall', 'postuninstall']
 networking_functions = ['get', 'put', 'post', 'then', 'fetch', 'encodeURIComponent', 'unescape']
 
@@ -43,6 +47,21 @@ df = pd.read_csv('data/downloads.csv', na_filter=False)
 popular_packages = set(df.loc[df['weekly_downloads'] > 10000]['package_name'].values)
 
 today = datetime.datetime.today()
+
+
+# Starts threads
+def main():
+    threads = []
+
+    for i in range(n_threads):
+        thread = threading.Thread(target=start_worker, args=(i,))
+        thread.start()
+        threads.append(thread)
+
+    for t in threads:
+        t.join()
+
+    os.system('rm -rf {}'.format(working_dir))
 
 
 # General setup. Creates directories, files, etc. needed for analysis
@@ -53,15 +72,20 @@ def init():
 
     os.mkdir(working_dir)
     os.mkdir('{}/packages_temp'.format(working_dir))
-    os.system('cp -r {}/jast {}'.format(network_dir, working_dir))
+    os.mkdir('{}/jast_models'.format(working_dir))
+
+    for i in range(n_threads):
+        os.system('cp -r {}/jast {}/jast_models/{}'.format(network_dir, working_dir, i))
 
 
 def log(message):
+    lock.acquire()
     log_file.write(message + '\n')
     log_file.flush()
+    lock.release()
 
 
-def start_worker():
+def start_worker(thread_id):
 
     while True:
         message = 'request'
@@ -72,8 +96,7 @@ def start_worker():
         client_socket.close()
 
         if response == 'no packages remaining':
-            os.system('rm -rf {}'.format(working_dir))
-            exit()
+            return
 
         try:
             dir_name = response
@@ -94,7 +117,7 @@ def start_worker():
             js_files = open('{}/packages_temp/{}/js_files'.format(working_dir, dir_name), 'r').readlines()
 
             # run tests, record results
-            jast_output = jast(js_files, dir_name)
+            jast_output = jast(js_files, dir_name, thread_id)
 
             # find package.json
             package_jsons = subprocess.check_output('find {}/packages_temp/{} -type f -name "package.json"'.format(working_dir, dir_name), shell=True).decode('utf8').split()
@@ -126,9 +149,9 @@ def start_worker():
             log(row)
 
             if jast_output == 'malicious':
-                os.system('mv {}/packages_temp/{} {}/malicious_packages'.format(working_dir, dir_name, network_dir))
-            else:
-                os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
+                os.system('mv {}/packages_temp/{}/jast_output {}/malicious_packages/{}_jast_output'.format(working_dir, dir_name, network_dir, dir_name))
+                
+            os.system('rm -rf {}/packages_temp/{}'.format(working_dir, dir_name))
 
         except:
             error_file.write('Package: {}\n'.format(package_name))
@@ -208,14 +231,15 @@ def command_in_install_scripts(metadata, command):
 # Searches for malicious syntax using jast
 # param: js_files, list of javascript files to scan
 # param: dir_name, where to save jast output file
+# param: thread_id, which jast model to use
 # return: string, 'malicious' or 'benign'
-def jast(js_files, dir_name):
+def jast(js_files, dir_name, thread_id):
     if len(js_files) == 0:
         return 'benign'
 
     # run jast on all files in js_files list
     for js_file in js_files:
-        os.system('python3 {}/jast/clustering/classifier.py --v 5 --th 0.1 --m {}/jast/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, working_dir, js_file[:-1], working_dir, dir_name))
+        os.system('python3 {}/jast_models/{}/clustering/classifier.py --v 5 --th 0.1 --m {}/jast_models/{}/Classification/model --f "{}" >> {}/packages_temp/{}/jast_output'.format(working_dir, thread_id, working_dir, thread_id, js_file[:-1], working_dir, dir_name))
 
     # get number of files classified as malicious
     result = subprocess.check_output('grep ": malicious" {}/packages_temp/{}/jast_output | wc -l'.format(working_dir, dir_name), shell=True)
@@ -243,4 +267,4 @@ def networking_calls(called_functions):
 
 if __name__ == '__main__':
     init()
-    start_worker()
+    main()
