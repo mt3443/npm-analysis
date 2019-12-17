@@ -31,16 +31,21 @@ def omitted_characters(str1, str2):
     short_iterator = 0
     long_word_length = len(long_word)
     short_word_length = len(short_word)
+    n_omitted = 0
 
     while long_iterator < long_word_length and short_iterator < short_word_length:
+        if n_omitted == 3:
+            break
+
         if long_word[long_iterator] == short_word[short_iterator]:
             long_iterator += 1
             short_iterator += 1
         else:
             del long_word[long_iterator]
             long_word_length -= 1
+            n_omitted += 1
 
-    return long_word[:len(short_word)] == short_word
+    return long_word == short_word
 
 def rearranged_characters(str1, str2):
     return sorted(str1) == sorted(str2) 
