@@ -269,7 +269,9 @@ function detect_typosquatting(package_name) {
 
 // NPM CouchDB on_change function, pass to typosquatting detector
 var dataHandler = function(data, done) {
-    console.log(data.seq);
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    process.stdout.write(data.seq.toString());
     detect_typosquatting(data.id);
     done();
 };
