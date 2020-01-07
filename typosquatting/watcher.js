@@ -1,17 +1,20 @@
-var changes = require('concurrent-couch-follower')
-var itertools = require('itertools')
-var fs = require('fs')
-var fuzz = require('fuzzball')
-var fuzzyset = require('fuzzyset.js')
+var changes = require('concurrent-couch-follower');
+var itertools = require('itertools');
+var fs = require('fs');
+var fuzz = require('fuzzball');
+var fuzzyset = require('fuzzyset.js');
 
 // package name delimiter regex
-var delimiter_regex = /[\W|_]/gm
+var delimiter_regex = /[\W|_]/gm;
 
 // version number regex
-var version_number_regex = /(.+?)(?:[\-|_|\.])?(?:\d+)(?:[\-|_|\.]\d+)*/gm
+var version_number_regex = /(.+?)(?:[\-|_|\.])?(?:\d+)(?:[\-|_|\.]\d+)*/gm;
 
 // allowed omitted characters
-var max_omitted_chars = 2
+var max_omitted_chars = 2;
+
+// output file write stream
+var log = fs.createWriteStream('watcher_output.csv', {'flags': 'a'});
 
 // common typos based on keyboard locality and appearance
 var typos = {
@@ -74,8 +77,8 @@ delete all_packages_json;
 // example: 'aaabbbbcccba' -> 'abcba'
 function remove_consecutive_duplicates(str) {
     let ret = ''
-    Array.from(itertools.groupby(str)).forEach(char => ret += char[0])
-    return ret
+    Array.from(itertools.groupby(str)).forEach(char => ret += char[0]);
+    return ret;
 }
 
 // check if given package name is typosquatting a popular package using repeated characters
@@ -85,17 +88,17 @@ function remove_consecutive_duplicates(str) {
 //         name of package being typosquatted, 'n/a' if false
 function repeated_characters(package_name) {
     
-    let package_chars = remove_consecutive_duplicates(package_name)
+    let package_chars = remove_consecutive_duplicates(package_name);
 
     for (index in popular_packages) {
-        let popular_package_chars = remove_consecutive_duplicates(popular_packages[index])
+        let popular_package_chars = remove_consecutive_duplicates(popular_packages[index]);
 
         if (popular_package_chars == package_chars) {
-            return [true, popular_packages[index]]
+            return popular_packages[index];
         }
     }
 
-    return [false, 'n/a']
+    return 'n/a';
 
 }
 
@@ -134,63 +137,60 @@ function omitted_characters(package_name) {
             }
         }
         if (popular_package.substr(i, popular_package.length) == package_name.substr(j, package_name.length)) {
-            return [true, popular_package]
+            return popular_package;
         }
     }
-    return [false, 'n/a']
+    return 'n/a';
 }
 
 function rearranged_characters(str1, str2) {
-    return str1.split('').sort().join('') == str2.split('').sort().join('')
+    return str1.split('').sort().join('') == str2.split('').sort().join('');
 }
 
 function swapped_characters(package_name) {
-    for (i in popular_packages) {
-
-        let popular_package = popular_packages[i]
+    for (let popular_package of popular_packages) {
 
         if (!rearranged_characters(package_name, popular_package)) {
-            continue
+            continue;
         }
 
-        for (j in package_name) {
+        for (let j in package_name) {
             if (package_name[j] != popular_package[j]) {
                 // swap two chars
                 let chars = package_name.split('');
                 let temp_char = '';
-                let int = parseInt(j)
-                temp_char = chars[int]
-                chars[int] = chars[int + 1]
-                chars[int + 1] = temp_char
+                let int = parseInt(j);
+                temp_char = chars[int];
+                chars[int] = chars[int + 1];
+                chars[int + 1] = temp_char;
 
                 if (chars.join('') == popular_package) {
-                    return [true, popular_package]
-                } else {
-                    return [false, 'n/a']
+                    return popular_package;
                 }
             }
         }
     }
+    return 'n/a';
 }
 
 function swapped_words(package_name) {
 
     if (package_name.match(delimiter_regex) == null) {
-        return [false, 'n/a']
+        return 'n/a';
     }
 
-    let s1 = package_name.replace(delimiter_regex, ' ').split(' ').sort().join(' ')
+    let s1 = package_name.replace(delimiter_regex, ' ').split(' ').sort().join(' ');
 
     for (i in popular_packages) {
-        let popular_package = popular_packages[i]
-        let s2 = popular_package.replace(delimiter_regex, ' ').split(' ').sort().join(' ')
+        let popular_package = popular_packages[i];
+        let s2 = popular_package.replace(delimiter_regex, ' ').split(' ').sort().join(' ');
 
         if (s1 == s2) {
-            return [true, popular_package]
+            return popular_package;
         }
     }
 
-    return [false, 'n/a']
+    return 'n/a';
 }
 
 function replace_at(string, index, replacement) {
@@ -201,20 +201,24 @@ function common_typos(package_name) {
     for (let i = 0; i < package_name.length; i++) {
         for (let replaced_char of typos[package_name[i]]) {
             if (popular_packages_set.has(replace_at(package_name, i, replaced_char))) {
-                return [true, replace_at(package_name, i, replaced_char)]
+                return replace_at(package_name, i, replaced_char);
             }
         }
     }
-    return [false, 'n/a']
+    return 'n/a';
 }
 
 function version_numbers(package_name) {
     let match = version_number_regex.exec(package_name);
     
+    if (match == null) {
+        return 'n/a';
+    }
+
     if (popular_packages_set.has(match[1])) {
-        return [true, match[1]]
+        return match[1];
     } else {
-        return [false, 'n/a']
+        return 'n/a';
     }
 }
 
@@ -223,7 +227,7 @@ function detect_typosquatting(package_name) {
 
     // ignore updates to popular packages
     if (popular_packages_set.has(package_name)) {
-        return
+        return;
     }
 
     // CONSIDERATION: only scan newly uploaded packages. this could increase performance
@@ -243,20 +247,32 @@ function detect_typosquatting(package_name) {
         let version_number_result = version_numbers(package_name)
 
         // TODO: run general edit distance, fuzzywuzzy, fuzzyset
-        //       record results
         //       flag new packages with highly suspicious results
+        //       check for install scripts
+
+        // IMPORTANT: OUTPUT CSV FILE COLUMN HEADERS
+        // package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number
+        log.write(
+            package_name + ',' +
+            repeated_characters_result + ',' +
+            omitted_characters_result + ',' +
+            swapped_characters_result + ',' +
+            swapped_words_result + ',' +
+            common_typos_result + ',' +
+            version_number_result + '\n'
+        );
 
         // add to all_packages_set
         all_packages_set.add(package_name);
     }
-
 }
 
 // NPM CouchDB on_change function, pass to typosquatting detector
 var dataHandler = function(data, done) {
-    detect_typosquatting(data.id)
-    done()
-}
+    console.log(data.seq);
+    detect_typosquatting(data.id);
+    done();
+};
 
 // NPM CouchDB listener settings
 var configOptions = {
@@ -264,7 +280,7 @@ var configOptions = {
   include_docs: false,
   sequence: '.sequence',
   concurrency: 20
-}
+};
 
 // start listener
-changes(dataHandler, configOptions)
+changes(dataHandler, configOptions);

@@ -11,3 +11,6 @@ __pycache__
 errors
 malicious_packages
 *.log
+typosquatting/.sequence
+typosquatting/_all_docs.json
+typosquatting/watcher_output.csv
