@@ -303,11 +303,11 @@ function detect_typosquatting(package_name) {
 function scan_all(machine_name) {
 
     // get the packages assigned to the node
-    let machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/package_names/' + machine_name).toString().split('\r\n');
+    let machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/package_names/' + machine_name).toString().split(/\s+/);
 
     for (let package_name of machine_packages) {
         // if the package is not popular
-        if (!popular_packages_set.has(package_name)) {
+        if (package_name != '' && !popular_packages_set.has(package_name)) {
             // scan it
             run_tests(package_name);
         }

@@ -69,6 +69,6 @@ for node in nodes_cores:
 
 # start clients
 for node in nodes_cores:
-    os.system('srun -N 1 -n 1 -c 1 -w {} python3 start_scan.py {} &'.format(node, node))
+    os.system('srun -N 1 -n 1 -c {} -w {} python3 start_scan.py {} &'.format(nodes_cores[node], node, node))
 
 print('Job started')
