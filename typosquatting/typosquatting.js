@@ -22,7 +22,7 @@ var max_omitted_chars = 2;
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
     let new_file = !fs.existsSync(log_file_name);
-    let stream = fs.openSync(log_file_name, {'flags': 'a'});
+    let stream = fs.openSync(log_file_name, 'a');
     if (new_file) {
         fs.writeSync(stream, output_file_column_headers);
     }
