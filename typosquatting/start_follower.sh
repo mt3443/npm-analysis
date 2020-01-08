@@ -8,5 +8,5 @@
 #SBATCH -J npm-follower
 #SBATCH -o slurm-%j.out
 
-srun -N 1 -n 1 -w g016 node follower.js follower &
+srun -N 1 -n 1 -w g016 node follower.js &
 wait

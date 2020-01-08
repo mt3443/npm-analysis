@@ -4,8 +4,8 @@ var fuzz = require('fuzzball');
 var fuzzyset = require('fuzzyset.js');
 
 // output file names
-var positives_file_name = process.argv[2] == undefined ? '/dev/shm/npm/typosquatting/typosquatting_positives.csv' : 'typosquatting_positives.csv';
-var negatives_file_name = process.argv[2] == undefined ? '/dev/shm/npm/typosquatting/typosquatting_negatives.csv' : 'typosquatting_negatives.csv';
+var positives_file_name = process.argv[2] == undefined ? 'typosquatting_positives.csv' : '/dev/shm/npm/typosquatting/typosquatting_positives.csv';
+var negatives_file_name = process.argv[2] == undefined ? 'typosquatting_negatives.csv' : '/dev/shm/npm/typosquatting/typosquatting_negatives.csv';
 
 // output csv file column headers
 var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number\n';
