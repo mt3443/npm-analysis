@@ -4,8 +4,8 @@ var fuzz = require('fuzzball');
 var fuzzyset = require('fuzzyset.js');
 
 // output file names
-var candidates_file_name = 'typosquatting_candidates.csv';
-var negatives_file_name = 'typosquatting_negatives.csv';
+var positives_file_name = '/dev/shm/npm/typosquatting/typosquatting_positives.csv';
+var negatives_file_name = '/dev/shm/npm/typosquatting/typosquatting_negatives.csv';
 
 // output csv file column headers
 var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number\n';
@@ -30,7 +30,7 @@ function init_log_file(log_file_name) {
 }
 
 // output file write streams
-var candidates_log = init_log_file(candidates_file_name);
+var positives_log = init_log_file(positives_file_name);
 var negatives_log = init_log_file(negatives_file_name);
 
 // common typos based on keyboard locality and appearance
@@ -271,7 +271,7 @@ function run_tests(package_name) {
     if (all_tests_negative) {
         negatives_log.write(package_name + ',' + result_row + '\n');
     } else {
-        candidates_log.write(package_name + ',' + result_row + '\n');
+        positives_log.write(package_name + ',' + result_row + '\n');
     }
 }
 

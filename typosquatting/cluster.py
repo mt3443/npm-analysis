@@ -48,11 +48,16 @@ else:
 os.mkdir('output/positive')
 os.mkdir('output/negative')
 
+if not os.path.isdir('package_names'):
+    os.mkdir('package_names')
+else:
+    os.system('rm -rf package_names/*')
+
 def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-all_chunks = chunks(all_packages, int(len(all_packages / len(nodes_cores))) + 1)
+all_chunks = chunks(all_packages, int(len(all_packages) / len(nodes_cores)) + 1)
 
 # assign packages
 for node in nodes_cores:
