@@ -216,6 +216,9 @@ function replace_at(string, index, replacement) {
 
 function common_typos(package_name) {
     for (let i = 0; i < package_name.length; i++) {
+        if (!Object.keys(typos).includes(package_name[i])) {
+            continue;
+        }
         for (let replaced_char of typos[package_name[i]]) {
             if (popular_packages_set.has(replace_at(package_name, i, replaced_char))) {
                 return replace_at(package_name, i, replaced_char);
