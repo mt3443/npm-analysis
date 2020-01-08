@@ -1,8 +1,14 @@
-var changes = require('concurrent-couch-follower');
 var itertools = require('itertools');
 var fs = require('fs');
 var fuzz = require('fuzzball');
 var fuzzyset = require('fuzzyset.js');
+
+// output file names
+var candidates_file_name = 'typosquatting_candidates.csv';
+var negatives_file_name = 'typosquatting_negatives.csv';
+
+// output csv file column headers
+var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number\n';
 
 // package name delimiter regex
 var delimiter_regex = /[\W|_]/gm;
@@ -13,8 +19,19 @@ var version_number_regex = /(.+?)(?:[\-|_|\.])?(?:\d+)(?:[\-|_|\.]\d+)*/gm;
 // allowed omitted characters
 var max_omitted_chars = 2;
 
-// output file write stream
-var log = fs.createWriteStream('watcher_output.csv', {'flags': 'a'});
+// set up log file, return log file stream
+function init_log_file(log_file_name) {
+    let new_file = !fs.existsSync(log_file_name);
+    let stream = fs.createWriteStream(log_file_name, {'flags': 'a'});
+    if (new_file) {
+        stream.write(output_file_column_headers);
+    }
+    return stream;
+}
+
+// output file write streams
+var candidates_log = init_log_file(candidates_file_name);
+var negatives_log = init_log_file(negatives_file_name);
 
 // common typos based on keyboard locality and appearance
 var typos = {
@@ -222,6 +239,42 @@ function version_numbers(package_name) {
     }
 }
 
+// runs typosquatting tests on a given package name, logs results
+function run_tests(package_name) {
+
+    let repeated_characters_result = repeated_characters(package_name);
+    let omitted_characters_result = omitted_characters(package_name);
+    let swapped_characters_result = swapped_characters(package_name);
+    let swapped_words_result = swapped_words(package_name);
+    let common_typos_result = common_typos(package_name);
+    let version_number_result = version_numbers(package_name);
+
+    // TODO: run general edit distance, fuzzywuzzy, fuzzyset
+    //       flag new packages with highly suspicious results
+    //       check for install scripts
+
+    let result_row = repeated_characters_result + ',' +
+                     omitted_characters_result + ',' +
+                     swapped_characters_result + ',' +
+                     swapped_words_result + ',' +
+                     common_typos_result + ',' +
+                     version_number_result;
+
+    let all_tests_negative = repeated_characters_result == 'n/a' &&
+                             omitted_characters_result == 'n/a' &&
+                             swapped_characters_result == 'n/a' &&
+                             swapped_words_result == 'n/a' &&
+                             common_typos_result == 'n/a' &&
+                             version_number_result == 'n/a';
+
+    // ignore packages that set off 0 tests
+    if (all_tests_negative) {
+        negatives_log.write(package_name + ',' + result_row + '\n');
+    } else {
+        candidates_log.write(package_name + ',' + result_row + '\n');
+    }
+}
+
 // high level typosquatting detection function, runs all checks
 function detect_typosquatting(package_name) {
 
@@ -230,8 +283,6 @@ function detect_typosquatting(package_name) {
         return;
     }
 
-    // CONSIDERATION: only scan newly uploaded packages. this could increase performance
-
     // if the couchDB change is an update to an existing package, ignore it
     if (all_packages_set.has(package_name)) {
         return
@@ -239,50 +290,25 @@ function detect_typosquatting(package_name) {
     // brand new package upload
     } else {
         // check for typosquatting
-        let repeated_characters_result = repeated_characters(package_name)
-        let omitted_characters_result = omitted_characters(package_name)
-        let swapped_characters_result = swapped_characters(package_name)
-        let swapped_words_result = swapped_words(package_name)
-        let common_typos_result = common_typos(package_name)
-        let version_number_result = version_numbers(package_name)
-
-        // TODO: run general edit distance, fuzzywuzzy, fuzzyset
-        //       flag new packages with highly suspicious results
-        //       check for install scripts
-
-        // IMPORTANT: OUTPUT CSV FILE COLUMN HEADERS
-        // package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number
-        log.write(
-            package_name + ',' +
-            repeated_characters_result + ',' +
-            omitted_characters_result + ',' +
-            swapped_characters_result + ',' +
-            swapped_words_result + ',' +
-            common_typos_result + ',' +
-            version_number_result + '\n'
-        );
+        run_tests(package_name);
 
         // add to all_packages_set
         all_packages_set.add(package_name);
     }
 }
 
-// NPM CouchDB on_change function, pass to typosquatting detector
-var dataHandler = function(data, done) {
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    process.stdout.write(data.seq.toString());
-    detect_typosquatting(data.id);
-    done();
-};
+function scan_all(machine_name) {
 
-// NPM CouchDB listener settings
-var configOptions = {
-  db: 'https://replicate.npmjs.com/',
-  include_docs: false,
-  sequence: '.sequence',
-  concurrency: 20
-};
+    // get the packages assigned to the node
+    let machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/package_names/' + machine_name).toString().split('\r\n');
 
-// start listener
-changes(dataHandler, configOptions);
+    for (let package_name of machine_packages) {
+        // if the package is not popular
+        if (!popular_packages_set.has(package_name)) {
+            // scan it
+            run_tests(package_name);
+        }
+    }
+}
+
+module.exports = {detect_typosquatting: detect_typosquatting, scan_all: scan_all}
