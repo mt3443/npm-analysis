@@ -22,9 +22,9 @@ var max_omitted_chars = 2;
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
     let new_file = !fs.existsSync(log_file_name);
-    let stream = fs.createWriteStream(log_file_name, {'flags': 'a'});
+    let stream = fs.openSync(log_file_name, {'flags': 'a'});
     if (new_file) {
-        stream.write(output_file_column_headers);
+        fs.writeSync(stream, output_file_column_headers);
     }
     return stream;
 }
@@ -272,9 +272,9 @@ function run_tests(package_name) {
 
     // ignore packages that set off 0 tests
     if (all_tests_negative) {
-        negatives_log.write(package_name + ',' + result_row + '\n');
+        fs.writeSync(negatives_log, package_name + ',' + result_row + '\n');
     } else {
-        positives_log.write(package_name + ',' + result_row + '\n');
+        fs.writeSync(positives_log, package_name + ',' + result_row + '\n');
     }
 }
 
