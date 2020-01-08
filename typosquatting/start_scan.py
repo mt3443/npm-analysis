@@ -2,6 +2,7 @@ import os
 import sys
 
 node = sys.argv[1]
+os.system('rm -rf /dev/shm/npm')
 os.system('mkdir -p /dev/shm/npm/typosquatting')
 os.system('mkdir /dev/shm/npm/data')
 os.system('cp _all_docs.json typosquatting.js scan_all_packages.js /dev/shm/npm/typosquatting')
