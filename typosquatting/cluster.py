@@ -1,10 +1,12 @@
 import json
 import os
 import re
+import random
 
 # get all packages
 all_packages_json = json.load(open('_all_docs.json', encoding='utf8'))['rows']
 all_packages = [x['id'] for x in all_packages_json]
+random.shuffle(all_packages)
 del all_packages_json
 
 os.system('scontrol show node > node_info')
