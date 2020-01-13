@@ -1,223 +1,223 @@
-malicious_package_name,benign_package_name
-zs-sha3,js-sha3
-ns-sha3,js-sha3
-ks-sha3,js-sha3
-jw-sha3,js-sha3
-jsmsha3,js-sha3
-js-wha3,js-sha3
-js-sxa3,js-sha3
-js-sla3,js-sha3
-js-sja3,js-sha3
-js-sia3,js-sha3
-js-shq3,js-sha3
-js-shi3,js-sha3
-js-she3,js-sha3
-js-shc3,js-sha3
-js-shas,js-sha3
-js-sha7,js-sha3
-js-rha3,js-sha3
-js-qha3,js-sha3
-js-cha3,js-sha3
-js-3ha3,js-sha3
-jr-sha3,js-sha3
-jq-sha3,js-sha3
-jc-sha3,js-sha3
-j3-sha3,js-sha3
-hs-sha3,js-sha3
-bs-sha3,js-sha3
-ruffer-xor,buffer-xor
-juffer-xor,buffer-xor
-fuffer-xor,buffer-xor
-cuffer-xor,buffer-xor
-bwffer-xor,buffer-xor
-buvfer-xor,buffer-xor
-bunfer-xor,buffer-xor
-bugfer-xor,buffer-xor
-bufver-xor,buffer-xor
-bufner-xor,buffer-xor
-bufger-xor,buffer-xor
-buffur-xor,buffer-xor
-buffmr-xor,buffer-xor
-buffgr-xor,buffer-xor
-buffez-xor,buffer-xor
-buffev-xor,buffer-xor
-buffes-xor,buffer-xor
-buffermxor,buffer-xor
-buffer-zor,buffer-xor
-buffer-yor,buffer-xor
-buffer-xoz,buffer-xor
-buffer-xov,buffer-xor
-buffer-xos,buffer-xor
-buffer-xop,buffer-xor
-buffer-xob,buffer-xor
-buffer-xo2,buffer-xor
-buffer-xnr,buffer-xor
-buffer-xmr,buffer-xor
-buffer-xkr,buffer-xor
-buffer-xgr,buffer-xor
-buffer-por,buffer-xor
-buffer-hor,buffer-xor
-buffer-8or,buffer-xor
-buffep-xor,buffer-xor
-buffeb-xor,buffer-xor
-buffe2-xor,buffer-xor
-buffdr-xor,buffer-xor
-buffar-xor,buffer-xor
-bufder-xor,buffer-xor
-bufber-xor,buffer-xor
-budfer-xor,buffer-xor
-bubfer-xor,buffer-xor
-btffer-xor,buffer-xor
-bqffer-xor,buffer-xor
-beffer-xor,buffer-xor
-b5ffer-xor,buffer-xor
-uglyfi.js,uglify-js
-ember_cli_babe,ember-cli-babel
-yeoman-genrator,yeoman-generator
-require-port,requires-port
-log-symboles,log-symbols
-comander,commander
-sparkies,sparkles
-serilize,serialize
-serializes,serialize
-mysql-koa,koa-mysql
-mogoose,mongoose
-mogodb-core,mongodb-core
-mogodb,mongodb
-mogobd,mongodb
-koa-body-parse,koa-body-parser
-k0a_multer,koa-multer
-import-mysql,mysql-import
-body-parse-xml,body-parser-xml
-axioss,axios
-axios-http,axios
-tiar,tar
-next-util,next-utils
-hpmm,hpm
-diamond-clien,diamond-client
-cicada-render,@cicada/render
-electron-native-notify,electron-native-notification
-epress,express
-commqnder,commander
-commmander,commander
-blubird,bluebird
-yeoman-genrator,yeoman-generator
-uglyfi-js,uglify-js
-require-ports,requires-port
-logsymbles,log-symbols
-jquerz,jquery
-jqeury,jquery
-hulp,gulp
-froever,forever
-colour-string,color-string
-colro-name,color-name
-browserift,browserify
-bowe,bower
-bowee,bower
-saync,async
-reqest,request
-erquest,request
-rqeuest,request
-requset,request
-requets,request
-equest,request
-reuest,request
-requst,request
-requet,request
-reques,request
-rrequest,request
-reequest,request
-reqquest,request
-requuest,request
-requeest,request
-requesst,request
-requestt,request
-calk,chalk
-chak,chalk
-eact,react
-experss,express
-exprss,express
-commnader,commander
-momen,moment
-aysnc,async
-asnyc,async
-asycn,async
-asnc,async
-aasync,async
-asyync,async
-asynnc,async
-asymc,async
-asinc,async
-4equest,request
-commander-js,commander
-foever,forever
-soket.js,socket.js
-soket.io,socket.io
-regenrator,regenerator
-regenraotr,regenerator
-axois,axios
-nothing-js,nothing.js
-getcookies,get-cookie
-lodahs,lodash
-web3-eth,web3-eht
-we3b,web3
-wbe3,web3
-wallet-address-validtaor,wallet-address-validator
-wallet-address-vaildator,wallet-address-validator
-singale,signale
-signqle,signale
-siganle,signale
-babel-laoder,babel-loader
-babel-loadre,babel-loader
-babel-loqder,babel-loader
-baes-x,base-x
-bconi,bcoin
-bcion,bcoin
-bictoin-ops,bitcoin-ops
-bictoind-rpc,bitcoind-rpc
-bictoinjs-lib,bitcoinjs-lib
-bictore-lib,bitcore-lib
-bitcion-ops,bitcoin-ops
-bitcionjs,bitcoinjs
-bitcionjslib,bitcoinjs-lib
-bitcoijns-lib,bitcoinjs-lib
-bitcoimd-rpc,bitcoind-rpc
-bitcoimjs-lib,bitcoinjs-lib
-bitcoisnj-lib,bitcoinjs-lib
-bitconi-ops,bitcoin-ops
-bitconid-rpc,bitcoind-rpc
-bitconijs-lib,bitcoinjs-lib
-bitcroe-lib,bitcore-lib
-bs58chcek,bs58check
-bs58chek,bs58check
-bs58chekc,bs58check
-bs85,bs58
-bs85check,bs58check
-bsae-x,base-x
-cionstring,coinstring
-coinpayment,coinpayments
-coinstirng,coinstring
-coinstrig,coinstring
-coinstrng,coinstring
-commandre,commander
-commanedr,commander
-conistring,coinstring
-crpyto-js,crypto-js
-crytpo-js,crypto-js
-cxt,ccxt
-degbu,debug
-ecruve,ecurve
-ecuvre,ecurve
-dhkey,hdkey
-hdeky,hdkey
-fs-extar,fs-extra
-hdkye,hdkey
-hw-trnasport-u2f,hw-transport-u2f
-path-to-regxep,path-to-regexp
-rceat,react
-riped160,ripemd160
-ripedm160,ripemd160
-ripmed160,ripemd160
-sb58,bs58
-scryptys,scryptsy
-scrytsy,scryptsy
+malicious_package_name,benign_package_name,detected,reason,,,,,
+zs-sha3,js-sha3,no,bad typo,,,,detected,0.603603604
+ns-sha3,js-sha3,yes,detected,,,,bad typo,0.220720721
+ks-sha3,js-sha3,yes,detected,,,,not popular,0.081081081
+jw-sha3,js-sha3,yes,detected,,,,swapped 3 chars,0.018099548
+jsmsha3,js-sha3,no,bad typo,,,,multiple signals,0.040909091
+js-wha3,js-sha3,yes,detected,,,,added random chars,0.02739726
+js-sxa3,js-sha3,no,bad typo,,,,didn't check for this,0.009174312
+js-sla3,js-sha3,no,bad typo,,,,,
+js-sja3,js-sha3,yes,detected,,,,,
+js-sia3,js-sha3,no,bad typo,,,,,
+js-shq3,js-sha3,yes,detected,,,,,
+js-shi3,js-sha3,no,bad typo,,,,,
+js-she3,js-sha3,no,bad typo,,,,,
+js-shc3,js-sha3,no,bad typo,,,,,
+js-shas,js-sha3,no,bad typo,,,,,
+js-sha7,js-sha3,no,bad typo,,,,,
+js-rha3,js-sha3,no,bad typo,,,,,
+js-qha3,js-sha3,yes,detected,,,,,
+js-cha3,js-sha3,yes,detected,,,,,
+js-3ha3,js-sha3,no,bad typo,,,,,
+jr-sha3,js-sha3,no,bad typo,,,,,
+jq-sha3,js-sha3,yes,detected,,,,,
+jc-sha3,js-sha3,yes,detected,,,,,
+j3-sha3,js-sha3,no,bad typo,,,,,
+hs-sha3,js-sha3,yes,detected,,,,,
+bs-sha3,js-sha3,no,bad typo,,,,,
+ruffer-xor,buffer-xor,no,bad typo,,,,,
+juffer-xor,buffer-xor,no,bad typo,,,,,
+fuffer-xor,buffer-xor,yes,detected,,,,,
+cuffer-xor,buffer-xor,no,bad typo,,,,,
+bwffer-xor,buffer-xor,no,bad typo,,,,,
+buvfer-xor,buffer-xor,yes,detected,,,,,
+bunfer-xor,buffer-xor,no,bad typo,,,,,
+bugfer-xor,buffer-xor,yes,detected,,,,,
+bufver-xor,buffer-xor,yes,detected,,,,,
+bufner-xor,buffer-xor,no,bad typo,,,,,
+bufger-xor,buffer-xor,yes,detected,,,,,
+buffur-xor,buffer-xor,no,bad typo,,,,,
+buffmr-xor,buffer-xor,no,bad typo,,,,,
+buffgr-xor,buffer-xor,no,bad typo,,,,,
+buffez-xor,buffer-xor,no,bad typo,,,,,
+buffev-xor,buffer-xor,no,bad typo,,,,,
+buffes-xor,buffer-xor,no,bad typo,,,,,
+buffermxor,buffer-xor,no,bad typo,,,,,
+buffer-zor,buffer-xor,yes,detected,,,,,
+buffer-yor,buffer-xor,no,bad typo,,,,,
+buffer-xoz,buffer-xor,no,bad typo,,,,,
+buffer-xov,buffer-xor,no,bad typo,,,,,
+buffer-xos,buffer-xor,no,bad typo,,,,,
+buffer-xop,buffer-xor,no,bad typo,,,,,
+buffer-xob,buffer-xor,no,bad typo,,,,,
+buffer-xo2,buffer-xor,no,bad typo,,,,,
+buffer-xnr,buffer-xor,no,bad typo,,,,,
+buffer-xmr,buffer-xor,no,bad typo,,,,,
+buffer-xkr,buffer-xor,yes,detected,,,,,
+buffer-xgr,buffer-xor,no,bad typo,,,,,
+buffer-por,buffer-xor,no,bad typo,,,,,
+buffer-hor,buffer-xor,no,bad typo,,,,,
+buffer-8or,buffer-xor,yes,detected,,,,,
+buffep-xor,buffer-xor,no,bad typo,,,,,
+buffeb-xor,buffer-xor,no,bad typo,,,,,
+buffe2-xor,buffer-xor,no,bad typo,,,,,
+buffdr-xor,buffer-xor,yes,detected,,,,,
+buffar-xor,buffer-xor,no,bad typo,,,,,
+bufder-xor,buffer-xor,yes,detected,,,,,
+bufber-xor,buffer-xor,yes,detected,,,,,
+budfer-xor,buffer-xor,yes,detected,,,,,
+bubfer-xor,buffer-xor,yes,detected,,,,,
+btffer-xor,buffer-xor,no,bad typo,,,,,
+bqffer-xor,buffer-xor,no,bad typo,,,,,
+beffer-xor,buffer-xor,no,bad typo,,,,,
+b5ffer-xor,buffer-xor,no,bad typo,,,,,
+uglyfi.js,uglify-js,no,multiple signals,,,,,
+ember_cli_babe,ember-cli-babel,no,multiple signals,,,,,
+yeoman-genrator,yeoman-generator,yes,detected,,,,,
+require-port,requires-port,yes,detected,,,,,
+log-symboles,log-symbols,no,added random chars,,,,,
+comander,commander,yes,detected,,,,,
+sparkies,sparkles,yes,detected,,,,,
+serilize,serialize,no,package not popular,,,,,
+serializes,serialize,no,package not popular,,,,,
+mysql-koa,koa-mysql,no,package not popular,,,,,
+mogoose,mongoose,yes,detected,,,,,
+mogodb-core,mongodb-core,yes,detected,,,,,
+mogodb,mongodb,yes,detected,,,,,
+mogobd,mongodb,no,multiple signals,,,,,
+koa-body-parse,koa-bodyparser,no,multiple signals,,,,,
+k0a_multer,koa-multer,no,multiple signals,,,,,
+import-mysql,mysql-import,no,package not popular,,,,,
+body-parse-xml,body-parser-xml,no,package not popular,,,,,
+axioss,axios,yes,detected,,,,,
+axios-http,axios,no,added random chars,,,,,
+tiar,tar,no,added random chars,,,,,
+next-util,next-utils,no,package not popular,,,,,
+hpmm,hpm,no,package not popular,,,,,
+diamond-clien,diamond-client,no,package not popular,,,,,
+cicada-render,@cicada/render,no,didn't check for this,,,,,
+electron-native-notify,electron-native-notification,no,didn't check for this,,,,,
+epress,express,yes,detected,,,,,
+commqnder,commander,yes,detected,,,,,
+commmander,commander,yes,detected,,,,,
+blubird,bluebird,yes,detected,,,,,
+yeoman-genrator,yeoman-generator,yes,detected,,,,,
+uglyfi-js,uglify-js,no,swapped 3 chars,,,,,
+require-ports,requires-port,no,added random chars,,,,,
+logsymbles,log-symbols,no,multiple signals,,,,,
+jquerz,jquery,no,bad typo,,,,,
+jqeury,jquery,yes,detected,,,,,
+hulp,gulp,yes,detected,,,,,
+froever,forever,yes,detected,,,,,
+colour-string,color-string,no,added random chars,,,,,
+colro-name,color-name,yes,detected,,,,,
+browserift,browserify,yes,detected,,,,,
+bowe,bower,yes,detected,,,,,
+bowee,bower,yes,detected,,,,,
+saync,async,yes,detected,,,,,
+reqest,request,yes,detected,,,,,
+erquest,request,yes,detected,,,,,
+rqeuest,request,yes,detected,,,,,
+requset,request,yes,detected,,,,,
+requets,request,yes,detected,,,,,
+equest,request,yes,detected,,,,,
+reuest,request,yes,detected,,,,,
+requst,request,yes,detected,,,,,
+requet,request,yes,detected,,,,,
+reques,request,yes,detected,,,,,
+rrequest,request,yes,detected,,,,,
+reequest,request,yes,detected,,,,,
+reqquest,request,yes,detected,,,,,
+requuest,request,yes,detected,,,,,
+requeest,request,yes,detected,,,,,
+requesst,request,yes,detected,,,,,
+requestt,request,yes,detected,,,,,
+calk,chalk,yes,detected,,,,,
+chak,chalk,yes,detected,,,,,
+eact,react,yes,detected,,,,,
+experss,express,yes,detected,,,,,
+exprss,express,yes,detected,,,,,
+commnader,commander,yes,detected,,,,,
+momen,moment,yes,detected,,,,,
+aysnc,async,yes,detected,,,,,
+asnyc,async,yes,detected,,,,,
+asycn,async,yes,detected,,,,,
+asnc,async,yes,detected,,,,,
+aasync,async,yes,detected,,,,,
+asyync,async,yes,detected,,,,,
+asynnc,async,yes,detected,,,,,
+asymc,async,yes,detected,,,,,
+asinc,async,yes,detected,,,,,
+4equest,request,yes,detected,,,,,
+commander-js,commander,no,added random chars,,,,,
+foever,forever,yes,detected,,,,,
+soket.js,socket.js,no,package not popular,,,,,
+soket.io,socket.io,yes,detected,,,,,
+regenrator,regenerator,yes,detected,,,,,
+regenraotr,regenerator,no,multiple signals,,,,,
+axois,axios,yes,detected,,,,,
+nothing-js,nothing.js,no,package not popular,,,,,
+getcookies,get-cookie,no,multiple signals,,,,,
+lodahs,lodash,yes,detected,,,,,
+web3-eht,web3-eth,yes,detected,,,,,
+we3b,web3,yes,detected,,,,,
+wbe3,web3,yes,detected,,,,,
+wallet-address-validtaor,wallet-address-validator,yes,detected,,,,,
+wallet-address-vaildator,wallet-address-validator,yes,detected,,,,,
+singale,signale,yes,detected,,,,,
+signqle,signale,yes,detected,,,,,
+siganle,signale,yes,detected,,,,,
+babel-laoder,babel-loader,yes,detected,,,,,
+babel-loadre,babel-loader,yes,detected,,,,,
+babel-loqder,babel-loader,yes,detected,,,,,
+baes-x,base-x,yes,detected,,,,,
+bconi,bcoin,no,package not popular,,,,,
+bcion,bcoin,no,package not popular,,,,,
+bictoin-ops,bitcoin-ops,yes,detected,,,,,
+bictoind-rpc,bitcoind-rpc,no,package not popular,,,,,
+bictoinjs-lib,bitcoinjs-lib,yes,detected,,,,,
+bictore-lib,bitcore-lib,yes,detected,,,,,
+bitcion-ops,bitcoin-ops,yes,detected,,,,,
+bitcionjs,bitcoinjs,no,package not popular,,,,,
+bitcionjslib,bitcoinjs-lib,no,multiple signals,,,,,
+bitcoijns-lib,bitcoinjs-lib,yes,detected,,,,,
+bitcoimd-rpc,bitcoind-rpc,no,package not popular,,,,,
+bitcoimjs-lib,bitcoinjs-lib,yes,detected,,,,,
+bitcoisnj-lib,bitcoinjs-lib,no,swapped 3 chars,,,,,
+bitconi-ops,bitcoin-ops,yes,detected,,,,,
+bitconid-rpc,bitcoind-rpc,no,package not popular,,,,,
+bitconijs-lib,bitcoinjs-lib,yes,detected,,,,,
+bitcroe-lib,bitcore-lib,yes,detected,,,,,
+bs58chcek,bs58check,yes,detected,,,,,
+bs58chek,bs58check,yes,detected,,,,,
+bs58chekc,bs58check,yes,detected,,,,,
+bs85,bs58,yes,detected,,,,,
+bs85check,bs58check,yes,detected,,,,,
+bsae-x,base-x,yes,detected,,,,,
+cionstring,coinstring,yes,detected,,,,,
+coinpayment,coinpayments,no,package not popular,,,,,
+coinstirng,coinstring,yes,detected,,,,,
+coinstrig,coinstring,yes,detected,,,,,
+coinstrng,coinstring,yes,detected,,,,,
+commandre,commander,yes,detected,,,,,
+commanedr,commander,yes,detected,,,,,
+conistring,coinstring,yes,detected,,,,,
+crpyto-js,crypto-js,yes,detected,,,,,
+crytpo-js,crypto-js,yes,detected,,,,,
+cxt,ccxt,yes,detected,,,,,
+degbu,debug,no,swapped 3 chars,,,,,
+ecruve,ecurve,yes,detected,,,,,
+ecuvre,ecurve,yes,detected,,,,,
+dhkey,hdkey,yes,detected,,,,,
+hdeky,hdkey,yes,detected,,,,,
+fs-extar,fs-extra,yes,detected,,,,,
+hdkye,hdkey,yes,detected,,,,,
+hw-trnasport-u2f,hw-transport-u2f,no,package not popular,,,,,
+path-to-regxep,path-to-regexp,yes,detected,,,,,
+rceat,react,no,swapped 3 chars,,,,,
+riped160,ripemd160,yes,detected,,,,,
+ripedm160,ripemd160,yes,detected,,,,,
+ripmed160,ripemd160,yes,detected,,,,,
+sb58,bs58,yes,detected,,,,,
+scryptys,scryptsy,yes,detected,,,,,
+scrytsy,scryptsy,yes,detected,,,,,
