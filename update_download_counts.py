@@ -3,6 +3,7 @@ import os
 import re
 import random
 import pandas as pd
+import requests
 
 # get all packages
 print('Downloading all docs', flush=True)
