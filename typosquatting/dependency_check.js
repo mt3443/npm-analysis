@@ -64,7 +64,7 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
     let packages_to_be_installed = get_packages_to_be_installed(dependency_tree);
 
     // debug
-    console.log('total packages to be installed:', packages_to_be_installed.size);
+    console.log('Total packages to be installed:', packages_to_be_installed.size);
 
     // scan all packages in set
     let n_typosquatting = 0;
@@ -72,7 +72,7 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
         let typosquatting = detect_typosquatting(package);
 
         if (typosquatting != false) {
-            console.log('Warning: ' + package + ' is about to be installed and looks a lot like ' + typosquatting);
+            console.log('Warning: "' + package + '" is about to be installed and could be typosquatting "' + typosquatting + '"');
             n_typosquatting++;
         }
     }
@@ -80,6 +80,6 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
     if (n_typosquatting == 0) {
         console.log('No typosquatting detected')
     } else {
-        console.log('Warning: ' + n_typosquatting + ' possible typosquatting packages detected in the dependency tree for ' + requested_package);
+        console.log('Warning: ' + n_typosquatting + ' possible typosquatting packages detected in the dependency tree for "' + requested_package + '"');
     }
 });
