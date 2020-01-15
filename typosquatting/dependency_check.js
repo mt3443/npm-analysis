@@ -76,7 +76,7 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
         let typosquatting = detect_typosquatting(package);
 
         if (typosquatting != false) {
-            console.log('Warning: "' + package + '" is about to be installed and could be typosquatting "' + typosquatting + '"');
+            console.log('Warning: "' + requested_package + '" depends on "' + package + '", which may be typosquatting "' + typosquatting + '"');
             n_typosquatting++;
         }
     }
@@ -84,7 +84,17 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
     if (n_typosquatting == 0) {
         console.log('No typosquatting detected')
     } else {
-        console.log('Warning: ' + n_typosquatting + ' possible typosquatting packages detected in the dependency tree for "' + requested_package + '"');
+        //console.log('Warning: ' + n_typosquatting + ' possible typosquatting packages detected in the dependency tree for "' + requested_package + '"');
         
+        var stdin = process.stdin;
+        stdin.setEncoding('utf-8');
+        process.stdout.write('Are you sure you want to install "' + requested_package + '"? [y/n] ');
+
+        stdin.on('data', (data) => {
+            if (data.toLowerCase()[0] == 'y') {
+                console.log('download package here');
+            }
+            process.exit();
+        });
     }
 });
