@@ -1,5 +1,6 @@
 var itertools = require('itertools');
 var fs = require('fs');
+var levenshtein = require('fast-levenshtein');
 var fuzz = require('fuzzball');
 var fuzzyset = require('fuzzyset.js');
 
