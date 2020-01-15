@@ -1,4 +1,5 @@
 var ls = require('npm-remote-ls').ls;
+var config = require('npm-remote-ls').config;
 var detect_typosquatting = require('./typosquatting.min.js').detect_typosquatting;
 
 // check args
@@ -34,7 +35,6 @@ if (at_count == 1 && process.argv[2][0] == '@') {
     requested_version = 'latest';
 }
 
-
 function get_packages_to_be_installed(dependency_tree) {
     
     let temp_set = new Set();
@@ -58,6 +58,10 @@ function get_packages_to_be_installed(dependency_tree) {
     return temp_set;
 }
 
+// add command line option to download dev dependencies
+config({
+    development: false
+})
 
 ls(requested_package, requested_version, true, (dependency_tree) => {
     // get packages from dependency tree
@@ -81,5 +85,6 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
         console.log('No typosquatting detected')
     } else {
         console.log('Warning: ' + n_typosquatting + ' possible typosquatting packages detected in the dependency tree for "' + requested_package + '"');
+        
     }
 });
