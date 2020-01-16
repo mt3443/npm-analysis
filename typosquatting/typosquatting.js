@@ -9,7 +9,7 @@ var positives_file_name = process.argv[2] == undefined ? 'typosquatting_positive
 var negatives_file_name = process.argv[2] == undefined ? 'typosquatting_negatives.csv' : '/dev/shm/npm/typosquatting/typosquatting_negatives.csv';
 
 // output csv file column headers
-var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number,edit_distance\n';
+var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number\n';
 
 // package name delimiter regex
 var delimiter_regex = /[\W|_]/gm;
@@ -274,7 +274,7 @@ function run_tests(package_name) {
     let swapped_words_result = swapped_words(package_name);
     let common_typos_result = common_typos(package_name);
     let version_number_result = version_numbers(package_name);
-    let edit_distance_result = edit_distance(package_name);
+    //let edit_distance_result = edit_distance(package_name);
 
     // TODO: run general edit distance, fuzzywuzzy, fuzzyset
     //       flag new packages with highly suspicious results
@@ -285,16 +285,16 @@ function run_tests(package_name) {
                      swapped_characters_result + ',' +
                      swapped_words_result + ',' +
                      common_typos_result + ',' +
-                     version_number_result + ',' +
-                     edit_distance_result;
+                     version_number_result;// + ',' +
+                     //edit_distance_result;
 
     let all_tests_negative = repeated_characters_result == 'n/a' &&
                              omitted_characters_result == 'n/a' &&
                              swapped_characters_result == 'n/a' &&
                              swapped_words_result == 'n/a' &&
                              common_typos_result == 'n/a' &&
-                             version_number_result == 'n/a' &&
-                             edit_distance_result == 'n/a';
+                             version_number_result == 'n/a';// &&
+                             //edit_distance_result == 'n/a';
 
     // ignore packages that set off 0 tests
     if (all_tests_negative) {
