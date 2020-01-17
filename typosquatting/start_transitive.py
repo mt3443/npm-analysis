@@ -36,13 +36,16 @@ for package_name in machine_packages:
             if clean_dependency in typosquatting_candidates:
                 typosquatting = True
                 positive_log.write('{}\n'.format(package_name))
+                positive_log.flush()
                 break
 
         if not typosquatting:
             negative_log.write('{}\n'.format(package_name))
+            negative_log.flush()
 
     except:
         negative_log.write('{}\n'.format(package_name))
+        negative_log.flush()
 
 positive_log.close()
 negative_log.close()
