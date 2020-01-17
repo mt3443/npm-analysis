@@ -9,10 +9,7 @@ os.system('mkdir -p /dev/shm/npm/transitive')
 os.system('mkdir /dev/shm/npm/data')
 os.system('cp run_transitive.js /dev/shm/npm/transitive')
 os.system('cp ../data/typosquatting_candidates.txt /dev/shm/npm/data')
-os.system('cp /users/m139t745/.nvm/versions/v13.0.1/bin/npm-remote-ls /dev/shm/npm')
-
-import time
-time.sleep(9999999)
+os.system('cp /users/m139t745/.nvm/versions/node/v13.0.1/bin/npm-remote-ls /dev/shm/npm')
 
 #os.system('node run_transitive.js {}'.format(node))
 
