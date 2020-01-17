@@ -9,7 +9,7 @@ os.system('mkdir -p /dev/shm/npm/transitive')
 os.system('mkdir /dev/shm/npm/data')
 os.system('cp run_transitive.js /dev/shm/npm/transitive')
 os.system('cp ../data/typosquatting_candidates.txt /dev/shm/npm/data')
-os.system('cp /users/m139t745/.nvm/versions/node/v13.0.1/bin/npm-remote-ls /dev/shm/npm')
+os.system('nvm use --delete-prefix v13.0.1 --silent')
 
 #os.system('node run_transitive.js {}'.format(node))
 
@@ -21,7 +21,7 @@ typosquatting_candidates = set(open('/dev/shm/npm/data/typosquatting_candidates.
 machine_packages = open('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/{}'.format(node)).read().splitlines()
 
 for package_name in machine_packages:
-    result = subprocess.check_output('/dev/shm/npm/npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
+    result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
 
     try:
         typosquatting = False
