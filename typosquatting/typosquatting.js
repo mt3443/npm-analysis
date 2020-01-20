@@ -226,6 +226,11 @@ function edit_distance(package_name) {
 // runs typosquatting tests on a given package name, logs results
 function run_tests(package_name) {
 
+    if (popular_packages_set.has(package_name)) {
+        fs.writeSync(negatives_log, package_name + '\n');
+        return;
+    }
+
     let repeated_characters_result = repeated_characters(package_name);
     let omitted_characters_result = omitted_characters(package_name);
     let swapped_characters_result = swapped_characters(package_name);
@@ -293,7 +298,7 @@ function run_tests(package_name) {
     if (positive) {
         fs.writeSync(positives_log, package_name + ',' + results.join(',') + '\n');
     } else {
-        fs.writeSync(negatives_log, package_name + ',' + results.join(',') + '\n');
+        fs.writeSync(negatives_log, package_name + '\n');
     }
 }
 
@@ -326,7 +331,7 @@ function scan_all(machine_name) {
 
     for (let package_name of machine_packages) {
         // if the package is not popular
-        if (package_name != '' && !popular_packages_set.has(package_name)) {
+        if (package_name != '') {
             // scan it
             run_tests(package_name);
         }
