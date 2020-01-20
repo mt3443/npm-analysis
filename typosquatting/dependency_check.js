@@ -64,6 +64,7 @@ config({
 })
 
 ls(requested_package, requested_version, true, (dependency_tree) => {
+    var start = new Date();
     // get packages from dependency tree
     let packages_to_be_installed = get_packages_to_be_installed(dependency_tree);
 
@@ -80,6 +81,9 @@ ls(requested_package, requested_version, true, (dependency_tree) => {
             n_typosquatting++;
         }
     }
+
+    var end = new Date() - start;
+    console.log('scan time %dms', end);
 
     if (n_typosquatting == 0) {
         console.log('No typosquatting detected')

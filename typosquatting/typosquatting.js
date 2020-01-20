@@ -1,24 +1,19 @@
 var itertools = require('itertools');
 var fs = require('fs');
 var levenshtein = require('fast-levenshtein');
-var fuzz = require('fuzzball');
-var fuzzyset = require('fuzzyset.js');
 
 // output file names
 var positives_file_name = process.argv[2] == undefined ? 'typosquatting_positives.csv' : '/dev/shm/npm/typosquatting/typosquatting_positives.csv';
 var negatives_file_name = process.argv[2] == undefined ? 'typosquatting_negatives.csv' : '/dev/shm/npm/typosquatting/typosquatting_negatives.csv';
 
 // output csv file column headers
-var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number\n';
+var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number,edit_distance\n';
 
 // package name delimiter regex
-var delimiter_regex = /[\W|_]/gm;
+var delimiter_regex = /[\W|_]/;
 
 // version number regex
-var version_number_regex = /(.*?)[\-|_|\.]?(\d+[\-|_|\.]?.*)+/gm;
-
-// allowed omitted characters
-// var max_omitted_chars = 1;
+var version_number_regex = /(.*?)[\.|\-|_]?\d+/;
 
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
@@ -83,14 +78,6 @@ var typos = {
 var popular_packages = fs.readFileSync('../data/popular_packages.txt').toString().split('\r\n');
 var popular_packages_set = new Set(popular_packages);
 
-// get the names of all packages to detect new package uploads
-var all_packages_set = new Set();
-var all_packages_json = JSON.parse(fs.readFileSync('_all_docs.json', 'utf8'))['rows'];
-for (let temp_package of all_packages_json) {
-    all_packages_set.add(temp_package['id']);
-}
-delete all_packages_json;
-
 // removes consecutive duplicate characters from given string
 // example: 'aaabbbbcccba' -> 'abcba'
 function remove_consecutive_duplicates(str) {
@@ -116,7 +103,7 @@ function repeated_characters(package_name) {
         }
     }
 
-    return 'n/a';
+    return '';
 
 }
 
@@ -126,39 +113,6 @@ function repeated_characters(package_name) {
 // return: array [bool, string], bool is true if possible typosquatting is detected, string contains
 //         name of package being typosquatted, 'n/a' if false
 function omitted_characters(package_name) {
-    // consider setting a max number of omitted characters allowed
-    // so, for instance, 're' won't be typosquatting 'react-native'
-    // feeling like 2 omissions is fine
-
-    // for (let popular_package of popular_packages_set) {
-
-    //     if (package_name.legnth >= popular_package.length || (popular_package.length - package_name.length) > max_omitted_chars) {
-    //         continue
-    //     }
-
-    //     let m = popular_package.length;
-    //     let i = 0;
-    //     let j = 0;
-    //     let n_omitted = 0;
-        
-    //     while (i < m) {
-    //         if (popular_package[i] == package_name[j]) {
-    //             i++;
-    //             j++;
-    //         } else {
-    //             i++;
-    //             n_omitted++;
-
-    //             if (n_omitted == max_omitted_chars) {
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     if (popular_package.substr(i, popular_package.length) == package_name.substr(j, package_name.length)) {
-    //         return popular_package;
-    //     }
-    // }
-    // return 'n/a';
 
     for (let i = 0; i < package_name.length; i++) {
         if (popular_packages_set.has(package_name.slice(0, i) + package_name.slice(i + 1))) {
@@ -166,7 +120,7 @@ function omitted_characters(package_name) {
         }
     }
 
-    return 'n/a';
+    return '';
 }
 
 function rearranged_characters(str1, str2) {
@@ -175,6 +129,10 @@ function rearranged_characters(str1, str2) {
 
 function swapped_characters(package_name) {
     for (let popular_package of popular_packages) {
+
+        if (package_name.length != popular_package.length) {
+            continue;
+        }
 
         if (!rearranged_characters(package_name, popular_package)) {
             continue;
@@ -196,13 +154,13 @@ function swapped_characters(package_name) {
             }
         }
     }
-    return 'n/a';
+    return '';
 }
 
 function swapped_words(package_name) {
 
     if (package_name.match(delimiter_regex) == null) {
-        return 'n/a';
+        return '';
     }
 
     let s1 = package_name.replace(delimiter_regex, ' ').split(' ').sort().join(' ');
@@ -216,7 +174,7 @@ function swapped_words(package_name) {
         }
     }
 
-    return 'n/a';
+    return '';
 }
 
 function replace_at(string, index, replacement) {
@@ -234,20 +192,20 @@ function common_typos(package_name) {
             }
         }
     }
-    return 'n/a';
+    return '';
 }
 
 function version_numbers(package_name) {
     let match = version_number_regex.exec(package_name);
     
     if (match == null) {
-        return 'n/a';
+        return '';
     }
 
     if (popular_packages_set.has(match[1])) {
         return match[1];
     } else {
-        return 'n/a';
+        return '';
     }
 }
 
@@ -262,7 +220,7 @@ function edit_distance(package_name) {
         }
     }
 
-    return 'n/a';
+    return '';
 }
 
 // runs typosquatting tests on a given package name, logs results
@@ -274,33 +232,68 @@ function run_tests(package_name) {
     let swapped_words_result = swapped_words(package_name);
     let common_typos_result = common_typos(package_name);
     let version_number_result = version_numbers(package_name);
-    //let edit_distance_result = edit_distance(package_name);
+    let edit_distance_result = edit_distance(package_name);
 
     // TODO: run general edit distance, fuzzywuzzy, fuzzyset
-    //       flag new packages with highly suspicious results
     //       check for install scripts
 
-    let result_row = repeated_characters_result + ',' +
-                     omitted_characters_result + ',' +
-                     swapped_characters_result + ',' +
-                     swapped_words_result + ',' +
-                     common_typos_result + ',' +
-                     version_number_result;// + ',' +
-                     //edit_distance_result;
+    let results = [];
+    let positive = false;
 
-    let all_tests_negative = repeated_characters_result == 'n/a' &&
-                             omitted_characters_result == 'n/a' &&
-                             swapped_characters_result == 'n/a' &&
-                             swapped_words_result == 'n/a' &&
-                             common_typos_result == 'n/a' &&
-                             version_number_result == 'n/a';// &&
-                             //edit_distance_result == 'n/a';
+    if (repeated_characters_result != '') {
+        positive = true;
+        results.push(repeated_characters_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (omitted_characters_result != '') {
+        positive = true;
+        results.push(omitted_characters_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (swapped_characters_result != '') {
+        positive = true;
+        results.push(swapped_characters_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (swapped_words_result != '') {
+        positive = true;
+        results.push(swapped_words_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (common_typos_result != '') {
+        positive = true;
+        results.push(common_typos_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (version_number_result != '') {
+        positive = true;
+        results.push(version_number_result);
+    } else {
+        results.push('n/a');
+    }
+
+    if (edit_distance_result != '') {
+        positive = true;
+        results.push(edit_distance_result);
+    } else {
+        results.push('n/a');
+    }
 
     // ignore packages that set off 0 tests
-    if (all_tests_negative) {
-        fs.writeSync(negatives_log, package_name + ',' + result_row + '\n');
+    if (positive) {
+        fs.writeSync(positives_log, package_name + ',' + results.join(',') + '\n');
     } else {
-        fs.writeSync(positives_log, package_name + ',' + result_row + '\n');
+        fs.writeSync(negatives_log, package_name + ',' + results.join(',') + '\n');
     }
 }
 
