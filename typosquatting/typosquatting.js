@@ -17,12 +17,7 @@ var version_number_regex = /^(.*?)[\.|\-|_]?\d+/;
 
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
-    let new_file = !fs.existsSync(log_file_name);
-    let stream = fs.openSync(log_file_name, 'a');
-    if (new_file) {
-        fs.writeSync(stream, output_file_column_headers);
-    }
-    return stream;
+    return fs.openSync(log_file_name, 'a');
 }
 
 // output file write streams

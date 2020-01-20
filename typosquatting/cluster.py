@@ -10,6 +10,22 @@ random.shuffle(all_packages)
 total_packages = len(all_packages)
 del all_packages_json
 
+# remove package names that have already been analyzed
+if os.path.exists('output2'):
+    all_packages_set = set(all_packages)
+    log_dirs = ['output2/negative', 'output2/positive']
+    
+    for d in log_dirs:
+        log_files = os.listdir(d)
+        for l in log_files:
+            packages = open(os.path.join(d, l)).read().splitlines()
+            for p in packages:
+                if p in all_packages_set:
+                    all_packages_set.remove(p)
+    
+    all_packages = list(all_packages_set)
+    del all_packages_set
+
 os.system('scontrol show node > node_info')
 node_info = open('node_info', 'r').readlines()
 
