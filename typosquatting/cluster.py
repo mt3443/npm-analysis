@@ -7,7 +7,6 @@ import random
 all_packages_json = json.load(open('_all_docs.json', encoding='utf8'))['rows']
 all_packages = [x['id'] for x in all_packages_json]
 random.shuffle(all_packages)
-total_packages = len(all_packages)
 del all_packages_json
 
 # remove package names that have already been analyzed
@@ -51,6 +50,7 @@ for node in all_nodes:
 del all_nodes
 
 total_cores = 0
+total_packages = len(all_packages)
 nodes_cores = {}
 
 for node in unused_nodes:
