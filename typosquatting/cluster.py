@@ -60,13 +60,13 @@ packages_per_core = int(total_packages / total_cores) + 1
 
 # assign packages
 for node in nodes_cores:
-	packages_for_this_node = packages_per_core * int(nodes_cores[node])
-	f = open('package_names/{}'.format(node), 'w')
-	for _ in range(packages_for_this_node):
+    packages_for_this_node = packages_per_core * int(nodes_cores[node])
+    f = open('package_names/{}'.format(node), 'w')
+    for _ in range(packages_for_this_node):
         if (len(all_packages) == 0):
             break
-		f.write('{}\n'.format(all_packages.pop()))
-	f.close()
+        f.write('{}\n'.format(all_packages.pop()))
+    f.close()
 
 # start clients
 for node in nodes_cores:
