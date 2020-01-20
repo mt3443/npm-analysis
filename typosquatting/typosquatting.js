@@ -13,7 +13,7 @@ var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swap
 var delimiter_regex = /[\W|_]/;
 
 // version number regex
-var version_number_regex = /(.*?)[\.|\-|_]?\d+/;
+var version_number_regex = /^(.*?)[\.|\-|_]?\d+/;
 
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
