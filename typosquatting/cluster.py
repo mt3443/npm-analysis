@@ -7,6 +7,7 @@ import random
 all_packages_json = json.load(open('_all_docs.json', encoding='utf8'))['rows']
 all_packages = [x['id'] for x in all_packages_json]
 random.shuffle(all_packages)
+total_packages = len(all_packages)
 del all_packages_json
 
 os.system('scontrol show node > node_info')
@@ -55,18 +56,16 @@ if not os.path.isdir('package_names'):
 else:
     os.system('rm -rf package_names/*')
 
-def chunks(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
-
-all_chunks = chunks(all_packages, int(len(all_packages) / len(nodes_cores)) + 1)
+packages_per_core = int(total_packages / total_cores) + 1
 
 # assign packages
 for node in nodes_cores:
-	current_chunk = next(all_chunks)
+	packages_for_this_node = packages_per_core * int(nodes_cores[node])
 	f = open('package_names/{}'.format(node), 'w')
-	for p in current_chunk:
-		f.write('{}\n'.format(p))
+	for _ in range(packages_for_this_node):
+        if (len(all_packages) == 0):
+            break
+		f.write('{}\n'.format(all_packages.pop()))
 	f.close()
 
 # start clients
