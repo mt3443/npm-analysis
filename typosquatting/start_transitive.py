@@ -25,7 +25,7 @@ for package_name in machine_packages:
     result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
 
     # remove any error text
-    bracket_index = result.find('[')
+    bracket_index = result.rfind('[')
     result = result[bracket_index:]
 
     try:
