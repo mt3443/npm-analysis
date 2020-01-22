@@ -9,6 +9,25 @@ all_packages = [x['id'] for x in all_packages_json]
 random.shuffle(all_packages)
 del all_packages_json
 
+# remove package names that have already been analyzed
+if os.path.exists('transitive_output1'):
+    all_packages_set = set(all_packages)
+    log_dirs = ['transitive_output1/negative', 'transitive_output1/positive']
+    
+    for d in log_dirs:
+        log_files = os.listdir(d)
+        for l in log_files:
+            packages = open(os.path.join(d, l)).read().splitlines()
+            for p in packages:
+                if len(p.split(',')) > 4:
+                    continue
+                x = p.split(',')[0]
+                if x in all_packages_set:
+                    all_packages_set.remove(x)
+    
+    all_packages = list(all_packages_set)
+    del all_packages_set
+
 os.system('scontrol show node > node_info')
 node_info = open('node_info', 'r').readlines()
 
@@ -34,6 +53,7 @@ for node in all_nodes:
 del all_nodes
 
 total_cores = 0
+total_packages = len(all_packages)
 nodes_cores = {}
 
 for node in unused_nodes:
@@ -55,19 +75,17 @@ if not os.path.isdir('transitive_package_names'):
 else:
     os.system('rm -rf transitive_package_names/*')
 
-def chunks(lst, n):
-    for i in range(0, len(lst), n):
-        yield lst[i:i + n]
-
-all_chunks = chunks(all_packages, int(len(all_packages) / len(nodes_cores)) + 1)
+packages_per_core = int(total_packages / total_cores) + 1
 
 # assign packages
 for node in nodes_cores:
-	current_chunk = next(all_chunks)
-	f = open('transitive_package_names/{}'.format(node), 'w')
-	for p in current_chunk:
-		f.write('{}\n'.format(p))
-	f.close()
+    packages_for_this_node = packages_per_core * int(nodes_cores[node])
+    f = open('transitive_package_names/{}'.format(node), 'w')
+    for _ in range(packages_for_this_node):
+        if (len(all_packages) == 0):
+            break
+        f.write('{}\n'.format(all_packages.pop()))
+    f.close()
 
 # start clients
 for node in nodes_cores:
