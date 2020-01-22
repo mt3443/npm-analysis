@@ -7,7 +7,7 @@ import threading
 lock = threading.Lock()
 
 node = sys.argv[1]
-n_threads = sys.argv[2]
+n_threads = int(sys.argv[2])
 
 os.system('rm -rf /dev/shm/npm')
 os.system('mkdir -p /dev/shm/npm/transitive')
