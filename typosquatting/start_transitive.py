@@ -7,11 +7,8 @@ node = sys.argv[1]
 os.system('rm -rf /dev/shm/npm')
 os.system('mkdir -p /dev/shm/npm/transitive')
 os.system('mkdir /dev/shm/npm/data')
-os.system('cp run_transitive.js /dev/shm/npm/transitive')
 os.system('cp ../data/typosquatting_candidates.txt /dev/shm/npm/data')
 os.system('nvm use --delete-prefix v13.0.1 --silent')
-
-#os.system('node run_transitive.js {}'.format(node))
 
 positive_log = open('/dev/shm/npm/transitive/positive', 'w')
 negative_log = open('/dev/shm/npm/transitive/negative', 'w')
@@ -21,6 +18,11 @@ typosquatting_candidates = set(open('/dev/shm/npm/data/typosquatting_candidates.
 machine_packages = open('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/{}'.format(node)).read().splitlines()
 
 for package_name in machine_packages:
+
+    if package_name in typosquatting_candidates:
+        positive_log.write('{}\n'.format(package_name))
+        continue
+
     result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
 
     try:
