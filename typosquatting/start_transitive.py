@@ -2,8 +2,13 @@ import os
 import sys
 import ast
 import subprocess
+import threading
+
+lock = threading.Lock()
 
 node = sys.argv[1]
+n_threads = sys.argv[2]
+
 os.system('rm -rf /dev/shm/npm')
 os.system('mkdir -p /dev/shm/npm/transitive')
 os.system('mkdir /dev/shm/npm/data')
@@ -16,41 +21,69 @@ typosquatting_candidates = set(open('/dev/shm/npm/data/typosquatting_candidates.
 
 machine_packages = open('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/{}'.format(node)).read().splitlines()
 
-for package_name in machine_packages:
 
-    if package_name in typosquatting_candidates:
-        positive_log.write('{}\n'.format(package_name))
-        continue
+def start_thread(packages):
+    for package_name in packages:
 
-    result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
+        if package_name in typosquatting_candidates:
+            lock.acquire()
+            positive_log.write('{}\n'.format(package_name))
+            positive_log.flush()
+            lock.release()
+            continue
 
-    # remove any error text
-    bracket_index = result.rfind('[')
-    result = result[bracket_index:]
+        result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
 
-    try:
-        typosquatting = False
-        raw_dependencies = ast.literal_eval(result)
-        for dependency in raw_dependencies:
-            if dependency[0] == '@':
-                at_index = dependency.find('@', 1)
-                clean_dependency = dependency[:at_index]
-            else:
-                clean_dependency = dependency.split('@')[0]
+        # remove any error text
+        bracket_index = result.rfind('[')
+        result = result[bracket_index:]
 
-            if clean_dependency in typosquatting_candidates:
-                typosquatting = True
-                positive_log.write('{}\n'.format(package_name))
-                positive_log.flush()
-                break
+        try:
+            typosquatting = False
+            raw_dependencies = ast.literal_eval(result)
+            for dependency in raw_dependencies:
+                if dependency[0] == '@':
+                    at_index = dependency.find('@', 1)
+                    clean_dependency = dependency[:at_index]
+                else:
+                    clean_dependency = dependency.split('@')[0]
 
-        if not typosquatting:
+                if clean_dependency in typosquatting_candidates:
+                    typosquatting = True
+                    lock.acquire()
+                    positive_log.write('{}\n'.format(package_name))
+                    positive_log.flush()
+                    lock.release()
+                    break
+
+            if not typosquatting:
+                lock.acquire()
+                negative_log.write('{}\n'.format(package_name))
+                negative_log.flush()
+                lock.release()
+
+        except:
+            lock.acquire()
             negative_log.write('{}\n'.format(package_name))
             negative_log.flush()
+            lock.release()
 
-    except:
-        negative_log.write('{}\n'.format(package_name))
-        negative_log.flush()
+
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+all_chunks = chunks(machine_packages, int(len(machine_packages) / n_threads) + 1)
+threads = []
+
+for _ in range(n_threads):
+    chunk = next(all_chunks)
+    t = threading.Thread(target=start_thread, args=(chunk,))
+    t.start()
+    threads.append(t)
+
+for t in threads:
+    t.join()
 
 positive_log.close()
 negative_log.close()
