@@ -8,7 +8,6 @@ os.system('rm -rf /dev/shm/npm')
 os.system('mkdir -p /dev/shm/npm/transitive')
 os.system('mkdir /dev/shm/npm/data')
 os.system('cp ../data/typosquatting_candidates.txt /dev/shm/npm/data')
-os.system('nvm use --delete-prefix v13.0.1 --silent')
 
 positive_log = open('/dev/shm/npm/transitive/positive', 'w')
 negative_log = open('/dev/shm/npm/transitive/negative', 'w')
@@ -24,6 +23,10 @@ for package_name in machine_packages:
         continue
 
     result = subprocess.check_output('npm-remote-ls -n {} -f -d false'.format(package_name), shell=True).decode('utf8')
+
+    # remove any error text
+    bracket_index = result.find('[')
+    result = result[bracket_index:]
 
     try:
         typosquatting = False
