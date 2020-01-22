@@ -7,13 +7,16 @@ var positives_file_name = process.argv[2] == undefined ? 'typosquatting_positive
 var negatives_file_name = process.argv[2] == undefined ? 'typosquatting_negatives.csv' : '/dev/shm/npm/typosquatting/typosquatting_negatives.csv';
 
 // output csv file column headers
-var output_file_column_headers = 'package_name,repeated_chars,omitted_chars,swapped_chars,swapped_words,common_typos,version_number,edit_distance\n';
+var output_file_column_headers = 'package_name,repeated_chars,edit_distance,swapped_chars,swapped_words,common_typos,version_number\n';
 
 // package name delimiter regex
 var delimiter_regex = /[\W|_]/;
 
 // version number regex
-var version_number_regex = /^(.*?)[\.|\-|_]?\d+/;
+var version_number_regex = /^(.*?)[\.|\-|_]?\d+$/;
+
+// packages with scope regex (@types/node)
+var scope_regex = /^@(.*?)\/.+$/;
 
 // set up log file, return log file stream
 function init_log_file(log_file_name) {
@@ -37,8 +40,8 @@ var typos = {
     '8': ['7', 'u', 'i', 'o', '9'],
     '9': ['8', 'i', 'o', 'p', '0'],
     '0': ['9', 'o', 'p', '-', '_'],
-    '-': ['_', '0', 'p', '.'],
-    '_': ['-', '0', 'p', '.'],
+    '-': ['_', '0', 'p', '.', ''],
+    '_': ['-', '0', 'p', '.', ''],
     'q': ['1', '2', 'w', 's', 'a'],
     'w': ['1', '2', '3', 'e', 'd', 's', 'a', 'q', 'vv'],
     'e': ['2', '3', '4', 'r', 'f', 'd', 's', 'w'],
@@ -65,7 +68,7 @@ var typos = {
     'b': ['v', 'f', 'g', 'h', 'n'],
     'n': ['b', 'g', 'h', 'j', 'm'],
     'm': ['n', 'h', 'j', 'k', 'rn'],
-    '.': ['-', '_'],
+    '.': ['-', '_', ''],
     '/': ['1', 'l', 'i']
 };
 
@@ -94,6 +97,17 @@ function repeated_characters(package_name) {
         let popular_package_chars = remove_consecutive_duplicates(popular_packages[index]);
 
         if (popular_package_chars == package_chars) {
+            
+            match1 = scope_regex.exec(package_name);
+
+            if (match1 != null) {
+                match2 = scope_regex.exec(popular_packages[index]);
+
+                if (match2 != null && match1[1] == match2[1]) {
+                    continue;
+                }
+            }
+
             return popular_packages[index];
         }
     }
@@ -102,16 +116,25 @@ function repeated_characters(package_name) {
 
 }
 
-// check if given package name is typosquatting a popular package name by omitting characters
-// example: 'ract' is typosquatting 'react'
-// param: an unpopular package name
-// return: array [bool, string], bool is true if possible typosquatting is detected, string contains
-//         name of package being typosquatted, 'n/a' if false
-function omitted_characters(package_name) {
+// finds popular packages with edit distance of 1
+// note: package_name.length must be at least 5
+function edit_distance(package_name) {
+    if (package_name.length >= 5) {
+        for (let popular_package of popular_packages) {
+            if (levenshtein.get(package_name, popular_package) == 1) {
 
-    for (let i = 0; i < package_name.length; i++) {
-        if (popular_packages_set.has(package_name.slice(0, i) + package_name.slice(i + 1))) {
-            return package_name.slice(0, i) + package_name.slice(i + 1);
+                match1 = scope_regex.exec(package_name);
+
+                if (match1 != null) {
+                    match2 = scope_regex.exec(popular_package);
+    
+                    if (match2 != null && match1[1] == match2[1]) {
+                        continue;
+                    }
+                }
+
+                return popular_package;
+            }
         }
     }
 
@@ -144,6 +167,17 @@ function swapped_characters(package_name) {
                 chars[int + 1] = temp_char;
 
                 if (chars.join('') == popular_package) {
+
+                    match1 = scope_regex.exec(package_name);
+
+                    if (match1 != null) {
+                        match2 = scope_regex.exec(popular_package);
+
+                        if (match2 != null && match1[1] == match2[1]) {
+                            continue;
+                        }
+                    }
+
                     return popular_package;
                 }
             }
@@ -165,6 +199,17 @@ function swapped_words(package_name) {
         let s2 = popular_package.replace(delimiter_regex, ' ').split(' ').sort().join(' ');
 
         if (s1 == s2) {
+
+            match1 = scope_regex.exec(package_name);
+
+            if (match1 != null) {
+                match2 = scope_regex.exec(popular_package);
+
+                if (match2 != null && match1[1] == match2[1]) {
+                    continue;
+                }
+            }
+
             return popular_package;
         }
     }
@@ -182,8 +227,20 @@ function common_typos(package_name) {
             continue;
         }
         for (let replaced_char of typos[package_name[i]]) {
-            if (popular_packages_set.has(replace_at(package_name, i, replaced_char))) {
-                return replace_at(package_name, i, replaced_char);
+            let temp_package = replace_at(package_name, i, replaced_char); // popular package name
+            if (popular_packages_set.has(temp_package)) {
+
+                match1 = scope_regex.exec(package_name);
+
+                if (match1 != null) {
+                    match2 = scope_regex.exec(temp_package);
+
+                    if (match2 != null && match1[1] == match2[1]) {
+                        continue;
+                    }
+                }
+
+                return temp_package;
             }
         }
     }
@@ -198,24 +255,21 @@ function version_numbers(package_name) {
     }
 
     if (popular_packages_set.has(match[1])) {
+
+        match1 = scope_regex.exec(package_name);
+
+        if (match1 != null) {
+            match2 = scope_regex.exec(match[1]);
+
+            if (match2 != null && match1[1] == match2[1]) {
+                return '';
+            }
+        }
+
         return match[1];
     } else {
         return '';
     }
-}
-
-// finds popular packages with edit distance of 1
-// note: package_name.length must be greater than 4
-function edit_distance(package_name) {
-    if (package_name.length > 4) {
-        for (let popular_package of popular_packages) {
-            if (levenshtein.get(package_name, popular_package) == 1) {
-                return popular_package;
-            }
-        }
-    }
-
-    return '';
 }
 
 // runs typosquatting tests on a given package name, logs results
@@ -227,15 +281,11 @@ function run_tests(package_name) {
     }
 
     let repeated_characters_result = repeated_characters(package_name);
-    let omitted_characters_result = omitted_characters(package_name);
+    let edit_distance_result = edit_distance(package_name);
     let swapped_characters_result = swapped_characters(package_name);
     let swapped_words_result = swapped_words(package_name);
     let common_typos_result = common_typos(package_name);
     let version_number_result = version_numbers(package_name);
-    let edit_distance_result = edit_distance(package_name);
-
-    // TODO: run general edit distance, fuzzywuzzy, fuzzyset
-    //       check for install scripts
 
     let results = [];
     let positive = false;
@@ -247,9 +297,9 @@ function run_tests(package_name) {
         results.push('n/a');
     }
 
-    if (omitted_characters_result != '') {
+    if (edit_distance_result != '') {
         positive = true;
-        results.push(omitted_characters_result);
+        results.push(edit_distance_result);
     } else {
         results.push('n/a');
     }
@@ -278,13 +328,6 @@ function run_tests(package_name) {
     if (version_number_result != '') {
         positive = true;
         results.push(version_number_result);
-    } else {
-        results.push('n/a');
-    }
-
-    if (edit_distance_result != '') {
-        positive = true;
-        results.push(edit_distance_result);
     } else {
         results.push('n/a');
     }
