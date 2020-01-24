@@ -52,6 +52,8 @@ for node in all_nodes:
 
 del all_nodes
 
+unused_nodes = unused_nodes[-100:]
+
 total_cores = 0
 total_packages = len(all_packages)
 nodes_cores = {}
