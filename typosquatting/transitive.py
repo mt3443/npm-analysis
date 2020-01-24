@@ -10,17 +10,16 @@ random.shuffle(all_packages)
 del all_packages_json
 
 # remove package names that have already been analyzed
-if os.path.exists('transitive_output1'):
+if os.path.exists('/volatile/m139t745/transitive_output1'):
     all_packages_set = set(all_packages)
-    log_dirs = ['transitive_output1/negative', 'transitive_output1/positive']
     
+    log_dirs = ['/volatile/m139t745/transitive_output1']
+
     for d in log_dirs:
         log_files = os.listdir(d)
         for l in log_files:
             packages = open(os.path.join(d, l)).read().splitlines()
             for p in packages:
-                if len(p.split(',')) > 4:
-                    continue
                 x = p.split(',')[0]
                 if x in all_packages_set:
                     all_packages_set.remove(x)
