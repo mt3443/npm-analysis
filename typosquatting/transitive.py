@@ -62,13 +62,10 @@ for node in unused_nodes:
     nodes_cores[name] = n_cores
     total_cores += int(n_cores)
 
-if not os.path.isdir('transitive_output'):
-    os.mkdir('transitive_output')
+if not os.path.isdir('/volatile/m139t745/transitive_output'):
+    os.mkdir('/volatile/m139t745/transitive_output')
 else:
-    os.system('rm -rf transitive_output/*')
-
-os.mkdir('transitive_output/positive')
-os.mkdir('transitive_output/negative')
+    os.system('rm -rf /volatile/m139t745/transitive_output/*')
 
 if not os.path.isdir('transitive_package_names'):
     os.mkdir('transitive_package_names')
