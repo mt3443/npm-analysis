@@ -8,11 +8,14 @@ var config = require('npm-remote-ls').config;
 // node name
 var node_name = process.argv[2];
 
+// starting index
+var starting_index = process.argv[3];
+
 // get packages that the node was assigned
 var machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/' + node_name).toString().split(/\s+/);
 
 // output file
-var log = fs.openSync('/dev/shm/npm/transitive/output', 'w');
+var log = fs.openSync('/dev/shm/npm/transitive/output', 'a');
 
 // package name delimiter regex
 var delimiter_regex = /[\W|_]/;
@@ -434,4 +437,6 @@ function make_call(i) {
 // for cdf, count packages (A) with dependencies (B) that are typosquatting a package (C) with download counts
 
 // start analysis
-make_call(0);
+if (starting_index <= machine_packages.length - 1) {
+    make_call(starting_index);
+}
