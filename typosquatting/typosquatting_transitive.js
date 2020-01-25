@@ -9,7 +9,7 @@ var config = require('npm-remote-ls').config;
 var node_name = process.argv[2];
 
 // starting index
-var starting_index = process.argv[3];
+var starting_index = parseInt(process.argv[3]);
 
 // get packages that the node was assigned
 var machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/' + node_name).toString().split(/\s+/);
