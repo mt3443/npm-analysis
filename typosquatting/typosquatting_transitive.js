@@ -15,7 +15,7 @@ var starting_index = parseInt(process.argv[3]);
 var machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatting/transitive_package_names/' + node_name).toString().split(/\s+/);
 
 // output file
-var log = fs.openSync('/dev/shm/npm/transitive/output', 'a');
+var log = fs.openSync('/dev/shm/npm/transitive/output', 'w');
 
 // package name delimiter regex
 var delimiter_regex = /[\W|_]/;

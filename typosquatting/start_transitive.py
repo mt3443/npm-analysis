@@ -13,5 +13,5 @@ os.system('cp /users/m139t745/npm-analysis/data/downloads.csv /dev/shm/npm/data'
 for i in range(170):
     os.system('node typosquatting_transitive.js {} {} --max-old-space-size=65535'.format(node, i * 150))
 
-os.system('mv /dev/shm/npm/transitive/output /volatile/m139t745/transitive_output/{}'.format(node))
+os.system('cat /dev/shm/npm/transitive/output >> /volatile/m139t745/transitive_output/{}'.format(node))
 os.system('rm -rf /dev/shm/npm')
