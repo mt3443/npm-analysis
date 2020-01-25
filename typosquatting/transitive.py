@@ -4,6 +4,7 @@ import re
 import random
 
 # get all packages
+print('Loading packages...', flush=True)
 all_packages_json = json.load(open('_all_docs.json', encoding='utf8'))['rows']
 all_packages = [x['id'] for x in all_packages_json]
 random.shuffle(all_packages)
@@ -11,6 +12,7 @@ del all_packages_json
 
 # remove package names that have already been analyzed
 if os.path.exists('/volatile/m139t745/transitive_output1'):
+    print('Removing processed packages...', flush=True)
     all_packages_set = set(all_packages)
     
     log_dirs = ['/volatile/m139t745/transitive_output1']
@@ -27,6 +29,7 @@ if os.path.exists('/volatile/m139t745/transitive_output1'):
     all_packages = list(all_packages_set)
     del all_packages_set
 
+print('Getting cluster info...', flush=True)
 os.system('scontrol show node > node_info')
 node_info = open('node_info', 'r').readlines()
 
@@ -76,6 +79,7 @@ else:
 packages_per_core = int(total_packages / total_cores) + 1
 
 # assign packages
+print('Assigning packages...', flush=True)
 for node in nodes_cores:
     packages_for_this_node = packages_per_core * int(nodes_cores[node])
     f = open('transitive_package_names/{}'.format(node), 'w')
