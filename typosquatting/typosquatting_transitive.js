@@ -105,7 +105,7 @@ function repeated_characters(package_name) {
             match1 = scope_regex.exec(package_name);
 
             if (match1 != null) {
-                match2 = scope_regex.exec(popular_packages['package_name']);
+                match2 = scope_regex.exec(popular_package['package_name']);
 
                 if (match2 != null && match1[1] == match2[1]) {
                     continue;
@@ -305,7 +305,7 @@ function version_numbers(package_name) {
     }
 
     // look for the a package with the same name but without the version number
-    for (let popular_package of popular_packages) {
+    for (let popular_package of all_packages_json_array) {
         if (popular_package['package_name'] == match[1]) {
 
             // make sure its not in the same scope
