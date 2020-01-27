@@ -111,7 +111,7 @@ function repeated_characters(package_name) {
             match2 = scope_regex.exec(package_chars);
 
             if (match2 != null && match1[1] == match2[1]) {
-                continue;
+                return null;
             }
         }
 
