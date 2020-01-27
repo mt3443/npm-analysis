@@ -15,26 +15,20 @@ if os.path.exists('/volatile/m139t745/transitive_output'):
     print('Removing processed packages...', flush=True)
     all_packages_set = set(all_packages)
 
-    preprocessed_packages = open('/volatile/m139t745/preprocessed').read().splitlines()
-
-    for p in preprocessed_packages:
-        if p in all_packages_set:
-            all_packages_set.remove(p)
-
-    preprocessed_packages = open('/volatile/m139t745/preprocessed', 'a')
     for f in os.listdir('/volatile/m139t745/transitive_output'):
         file_contents = open('/volatile/m139t745/transitive_output/' + f).read()
 
         if file_contents[-1] != '\n':
             file_contents = file_contents[:file_contents.rfind('\n')]
+            writer = open('/volatile/m139t745/transitive_output/' + f, 'w')
+            writer.write(file_contents)
+            writer.close()
 
         for line in file_contents.splitlines():
             package = line.split(',')[0]
             if package in all_packages_set:
                 all_packages_set.remove(package)
-            preprocessed_packages.write(package + '\n')
 
-    preprocessed_packages.close()
     all_packages = list(all_packages_set)
     del all_packages_set
 
