@@ -74,6 +74,16 @@ var typos = {
 // load list of all packages (user ../data/downloads.csv for local debugging)
 const all_packages_json_array = csvjson.toObject(fs.readFileSync('/dev/shm/npm/data/downloads.csv').toString());
 
+var all_package_names_set = new Set();
+var dl_count_dict = {};
+
+for (let obj of all_packages_json_array) {
+    all_package_names_set.add(obj['package_name']);
+    dl_count_dict[obj['package_name']] = obj['weekly_downloads'];
+}
+
+delete all_packages_json_array;
+
 // removes consecutive duplicate characters from given string
 // example: 'aaabbbbcccba' -> 'abcba'
 function remove_consecutive_duplicates(str) {
@@ -84,36 +94,28 @@ function remove_consecutive_duplicates(str) {
 
 // check if given package name is typosquatting a popular package using repeated characters
 // example: 'reeact' is typosquatting 'react'
-// param: an unpopular package name
-// return: array [bool, string], bool is true if possible typosquatting is detected, string contains
-//         name of package being typosquatted, 'n/a' if false
+// return: [package_name, weekly_downloads]
 function repeated_characters(package_name) {
     
     let package_chars = remove_consecutive_duplicates(package_name);
 
-    for (let popular_package of all_packages_json_array) {
+    if (package_chars == package_name) {
+        return null;
+    }
 
-        // ignore the package being inspected when looking for typosquatting
-        if (popular_package['package_name'] == package_name) {
-            continue;
-        }
-
-        let popular_package_chars = remove_consecutive_duplicates(popular_package['package_name']);
-
-        if (popular_package_chars == package_chars) {
+    if (all_package_names_set.has(package_chars)) {
             
-            match1 = scope_regex.exec(package_name);
+        match1 = scope_regex.exec(package_name);
 
-            if (match1 != null) {
-                match2 = scope_regex.exec(popular_package['package_name']);
+        if (match1 != null) {
+            match2 = scope_regex.exec(package_chars);
 
-                if (match2 != null && match1[1] == match2[1]) {
-                    continue;
-                }
+            if (match2 != null && match1[1] == match2[1]) {
+                continue;
             }
-
-            return popular_package;
         }
+
+        return {'package_name': package_chars, 'weekly_downloads': dl_count_dict[package_chars]};
     }
 
     return null;
@@ -125,6 +127,10 @@ function repeated_characters(package_name) {
 function edit_distance(package_name) {
     if (package_name.length >= 7) {
         for (let popular_package of all_packages_json_array) {
+
+            if (Math.abs(popular_package.length - package_name.length) > 1) {
+                continue;
+            }
 
             // ignore the package being inspected when looking for typosquatting
             if (popular_package['package_name'] == package_name) {
@@ -151,54 +157,35 @@ function edit_distance(package_name) {
     return null;
 }
 
-function rearranged_characters(str1, str2) {
-    return str1.split('').sort().join('') == str2.split('').sort().join('');
-}
-
 function swapped_characters(package_name) {
-    for (let popular_package of all_packages_json_array) {
+    for (let i = 0; i < package_name.length - 1; i++) {
+        // swap chars at i and i + 1
+        // check if the new string is in all_package_names_set
 
-        if (package_name.length != popular_package['package_name'].length) {
-            continue;
-        }
+        let chars = package_name.split('');
+        let temp_char = '';
+        let int = parseInt(i);
+        temp_char = chars[int];
+        chars[int] = chars[int + 1];
+        chars[int + 1] = temp_char;
 
-        if (!rearranged_characters(package_name, popular_package['package_name'])) {
-            continue;
-        }
+        let swapped_package_name = chars.join('');
 
-        // ignore the package being inspected when looking for typosquatting
-        if (popular_package['package_name'] == package_name) {
-            continue;
-        }
+        if (all_package_names_set.has(swapped_package_name)) {
+            match1 = scope_regex.exec(package_name);
 
+            if (match1 != null) {
+                match2 = scope_regex.exec(swapped_package_name);
 
-        for (let j in package_name) {
-            if (package_name[j] != popular_package['package_name'][j]) {
-                // swap two chars
-                let chars = package_name.split('');
-                let temp_char = '';
-                let int = parseInt(j);
-                temp_char = chars[int];
-                chars[int] = chars[int + 1];
-                chars[int + 1] = temp_char;
-
-                if (chars.join('') == popular_package['package_name']) {
-
-                    match1 = scope_regex.exec(package_name);
-
-                    if (match1 != null) {
-                        match2 = scope_regex.exec(popular_package['package_name']);
-
-                        if (match2 != null && match1[1] == match2[1]) {
-                            continue;
-                        }
-                    }
-
-                    return popular_package;
+                if (match2 != null && match1[1] == match2[1]) {
+                    continue;
                 }
             }
+
+            return {'package_name': swapped_package_name, 'weekly_downloads': dl_count_dict[swapped_package_name]};
         }
     }
+
     return null;
 }
 
@@ -261,33 +248,18 @@ function common_typos(package_name) {
             // make the typo
             let temp_package = replace_at(package_name, i, replaced_char); // popular package name
 
-            // for every other package
-            for (let popular_package of all_packages_json_array) {
+            if (all_package_names_set.has(temp_package)) {
+                match1 = scope_regex.exec(package_name);
 
-                // ignore the package being inspected when looking for typosquatting
-                if (popular_package['package_name'] == package_name) {
-                    continue;
-                }
+                if (match1 != null) {
+                    match2 = scope_regex.exec(temp_package);
 
-                // if a package with that typo exists
-                if (popular_package['package_name'] == temp_package) {
-
-                    // check if the scope of the two packages are the same
-                    match1 = scope_regex.exec(package_name);
-
-                    if (match1 != null) {
-                        match2 = scope_regex.exec(temp_package);
-
-                        // if the scope is the same
-                        if (match2 != null && match1[1] == match2[1]) {
-                            // move on
-                            continue;
-                        }
+                    if (match2 != null && match1[1] == match2[1]) {
+                        continue;
                     }
-
-                    // if there is a package with the typo in a different scope, return it
-                    return popular_package;
                 }
+
+                return {'package_name': temp_package, 'weekly_downloads': dl_count_dict[temp_package]};
             }
         }
     }
@@ -305,24 +277,22 @@ function version_numbers(package_name) {
     }
 
     // look for the a package with the same name but without the version number
-    for (let popular_package of all_packages_json_array) {
-        if (popular_package['package_name'] == match[1]) {
+    if (all_package_names_set.has(match[1])) {
 
-            // make sure its not in the same scope
-            match1 = scope_regex.exec(package_name);
-    
-            if (match1 != null) {
-                match2 = scope_regex.exec(match[1]);
-    
-                if (match2 != null && match1[1] == match2[1]) {
-                    return null;
-                }
+        // make sure its not in the same scope
+        match1 = scope_regex.exec(package_name);
+
+        if (match1 != null) {
+            match2 = scope_regex.exec(match[1]);
+
+            if (match2 != null && match1[1] == match2[1]) {
+                return null;
             }
-    
-            return popular_package;
-        } else {
-            return null;
         }
+
+        return {'package_name': match[1], 'weekly_downloads': dl_count_dict[match[1]]};
+    } else {
+        return null;
     }
 }
 
