@@ -116,7 +116,7 @@ function repeated_characters(package_name) {
             }
         }
 
-        return {'package_name': package_chars, 'weekly_downloads': dl_count_dict[package_chars]};
+        return {'package_name': package_chars, 'weekly_downloads': dl_count_dict[package_chars] || 0};
     }
 
     return null;
@@ -141,7 +141,7 @@ function omitted_chars(package_name) {
                     }
                 }
 
-                return {'package_name': new_string, 'weekly_downloads': dl_count_dict[new_string]};
+                return {'package_name': new_string, 'weekly_downloads': dl_count_dict[new_string] || 0};
             }
         }
     }
@@ -174,7 +174,7 @@ function swapped_characters(package_name) {
                 }
             }
 
-            return {'package_name': swapped_package_name, 'weekly_downloads': dl_count_dict[swapped_package_name]};
+            return {'package_name': swapped_package_name, 'weekly_downloads': dl_count_dict[swapped_package_name] || 0};
         }
     }
 
@@ -273,7 +273,7 @@ function common_typos(package_name) {
                     }
                 }
 
-                return {'package_name': temp_package, 'weekly_downloads': dl_count_dict[temp_package]};
+                return {'package_name': temp_package, 'weekly_downloads': dl_count_dict[temp_package] || 0};
             }
         }
     }
@@ -304,7 +304,7 @@ function version_numbers(package_name) {
             }
         }
 
-        return {'package_name': match[1], 'weekly_downloads': dl_count_dict[match[1]]};
+        return {'package_name': match[1], 'weekly_downloads': dl_count_dict[match[1]] || 0};
     } else {
         return null;
     }
