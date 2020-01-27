@@ -63,8 +63,6 @@ for node in unused_nodes:
 
 if not os.path.isdir('/volatile/m139t745/transitive_output'):
     os.mkdir('/volatile/m139t745/transitive_output')
-else:
-    os.system('rm -rf /volatile/m139t745/transitive_output/*')
 
 if not os.path.isdir('transitive_package_names'):
     os.mkdir('transitive_package_names')
