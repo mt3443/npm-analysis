@@ -18,7 +18,8 @@ var machine_packages = fs.readFileSync('/users/m139t745/npm-analysis/typosquatti
 var log = fs.openSync('/volatile/m139t745/transitive_output/' + node_name, 'a');
 
 // package name delimiter regex
-var delimiter_regex = /[\W|_]/;
+var delimiter_regex = /[\-|\.|_]/g;
+var delimiters = ['', '.', '-', '_'];
 
 // version number regex
 var version_number_regex = /^(.*?)[\.|\-|_]?\d+$/;
@@ -122,34 +123,25 @@ function repeated_characters(package_name) {
 
 }
 
-// finds popular packages with edit distance of 1
-// note: package_name.length must be at least 7
-function edit_distance(package_name) {
-    if (package_name.length >= 7) {
-        for (let popular_package of all_packages_json_array) {
+// finds popular packages that have removed one character from given package_name
+// note: package_name.length must be at least 6
+function omitted_chars(package_name) {
+    if (package_name.length >= 6) {
+        for (let i = 0; i < package_name.length; i++) {
+            let new_string = package_name.slice(0, i) + package_name.slice(i + 1);
 
-            if (Math.abs(popular_package.length - package_name.length) > 1) {
-                continue;
-            }
-
-            // ignore the package being inspected when looking for typosquatting
-            if (popular_package['package_name'] == package_name) {
-                continue;
-            }
-
-            if (levenshtein.get(package_name, popular_package['package_name']) == 1) {
-
+            if (all_package_names_set.has(new_string)) {
                 match1 = scope_regex.exec(package_name);
 
                 if (match1 != null) {
-                    match2 = scope_regex.exec(popular_package['package_name']);
-    
+                    match2 = scope_regex.exec(new_string);
+
                     if (match2 != null && match1[1] == match2[1]) {
                         continue;
                     }
                 }
 
-                return popular_package;
+                return {'package_name': new_string, 'weekly_downloads': dl_count_dict[new_string]};
             }
         }
     }
@@ -189,44 +181,66 @@ function swapped_characters(package_name) {
     return null;
 }
 
+function permutations(array) {
+    function p(array, temp) {
+        var i, x;
+        if (!array.length) {
+            result.push(temp);
+        }
+        for (i = 0; i < array.length; i++) {
+            x = array.splice(i, 1)[0];
+            p(array, temp.concat(x));
+            array.splice(i, 0, x);
+        }
+    }
+
+    var result = [];
+    p(array, []);
+    return result;
+}
+
 function swapped_words(package_name) {
 
     if (package_name.match(delimiter_regex) == null) {
         return null;
     }
 
-    let s1 = package_name.replace(delimiter_regex, ' ').split(' ').sort().join(' ');
+    let ret_package_name = '';
+    let ret_dl_count = 0;
+    let tokens = package_name.replace(delimiter_regex, ' ').split(' ');
 
-    for (let popular_package of all_packages_json_array) {
+    for (let permutation of permutations(tokens)) {
+        for (let delimiter of delimiters) {
+            let new_string = permutation.join(delimiter);
 
-        if (popular_package['package_name'].match(delimiter_regex) == null) {
-            continue;
-        }
-
-        // ignore the package being inspected when looking for typosquatting
-        if (popular_package['package_name'] == package_name) {
-            continue;
-        }
-
-        let s2 = popular_package['package_name'].replace(delimiter_regex, ' ').split(' ').sort().join(' ');
-
-        if (s1 == s2) {
-
-            match1 = scope_regex.exec(package_name);
-
-            if (match1 != null) {
-                match2 = scope_regex.exec(popular_package['package_name']);
-
-                if (match2 != null && match1[1] == match2[1]) {
-                    continue;
-                }
+            if (new_string == package_name) {
+                continue;
             }
 
-            return popular_package;
+            if (all_package_names_set.has(new_string)) {
+                
+                match1 = scope_regex.exec(package_name);
+
+                if (match1 != null) {
+                    match2 = scope_regex.exec(new_string);
+    
+                    if (match2 != null && match1[1] == match2[1]) {
+                        continue;
+                    }
+                }
+
+                let new_dl_count = dl_count_dict[new_string] || 0;
+
+                if (ret_package_name == '' || parseInt(new_dl_count) > parseInt(ret_dl_count)) {
+                    ret_package_name = new_string;
+                    ret_dl_count = new_dl_count;
+                }
+            }
         }
     }
 
-    return null;
+    return {'package_name': ret_package_name, 'weekly_downloads': ret_dl_count};
+
 }
 
 function replace_at(string, index, replacement) {
@@ -300,7 +314,7 @@ function version_numbers(package_name) {
 function run_tests(package_name) {
 
     let repeated_characters_result = repeated_characters(package_name);
-    let edit_distance_result = edit_distance(package_name);
+    let omitted_chars_result = omitted_chars(package_name);
     let swapped_characters_result = swapped_characters(package_name);
     let swapped_words_result = swapped_words(package_name);
     let common_typos_result = common_typos(package_name);
@@ -312,8 +326,8 @@ function run_tests(package_name) {
         results.push(repeated_characters_result);
     }
 
-    if (edit_distance_result != null) {
-        results.push(edit_distance_result);
+    if (omitted_chars_result != null) {
+        results.push(omitted_chars_result);
     }
 
     if (swapped_characters_result != null) {
