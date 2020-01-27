@@ -397,7 +397,7 @@ function make_call(i) {
         for (let p of packages_to_be_installed) {
             let result = run_tests(p);
 
-            if (result != null) {
+            if (result != null && result['package_name'] != '') {
                 fs.writeSync(log, ',' + result['package_name'] + ',' + result['weekly_downloads']);
             }
 
