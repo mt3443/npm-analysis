@@ -10,8 +10,7 @@ os.system('mkdir -p /dev/shm/npm/data')
 os.system('cp /users/m139t745/npm-analysis/typosquatting/typosquatting_transitive.js /dev/shm/npm/transitive')
 os.system('cp /users/m139t745/npm-analysis/data/downloads.csv /dev/shm/npm/data')
 
-for i in range(170):
-    os.system('node typosquatting_transitive.js {} {} --max-old-space-size=65535'.format(node, i * 150))
+os.system('node typosquatting_transitive.js {} --max-old-space-size=65535'.format(node))
 
 os.system('cat /dev/shm/npm/transitive/output >> /volatile/m139t745/transitive_output/{}'.format(node))
 os.system('rm -rf /dev/shm/npm')
