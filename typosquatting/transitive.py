@@ -92,6 +92,6 @@ for node in nodes_cores:
 
 # start clients
 for node in nodes_cores:
-    os.system('srun -N 1 -n 1 -c {} -w {} python3 start_transitive.py {} {} &'.format(nodes_cores[node], node, node, nodes_cores[node]))
+    os.system('srun -N 1 -n 1 -c {} -w {} --mem-per-cpu=2G -- python3 start_transitive.py {} {} &'.format(nodes_cores[node], node, node, nodes_cores[node]))
 
 print('Job started')
