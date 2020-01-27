@@ -21,7 +21,7 @@ if os.path.exists('/volatile/m139t745/transitive_output'):
         if file_contents[-1] != '\n':
             file_contents = file_contents[:file_contents.rfind('\n')]
             writer = open('/volatile/m139t745/transitive_output/' + f, 'w')
-            writer.write(file_contents)
+            writer.write(file_contents + '\n')
             writer.close()
 
         for line in file_contents.splitlines():
