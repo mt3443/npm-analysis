@@ -403,7 +403,7 @@ function make_call(i) {
         for (let p of packages_to_be_installed) {
             let result = run_tests(p);
 
-            if (result != null && result['package_name'] != '') {
+            if (result != null && result['package_name'] != '' && result['package_name'] != p) {
                 // log dependency name, typosquatting candidate
                 fs.writeSync(log, ',' + p + ',' + result['package_name']);
             }
