@@ -350,6 +350,7 @@ function run_tests(package_name) {
     if (results.length == 0) {
         return null;
     } else {
+        // return the most popular typosquatting candidate
         results.sort((a, b) => {return b['weekly_downloads'] - a['weekly_downloads']});
         return results[0];
     }
@@ -375,6 +376,11 @@ function get_packages_to_be_installed(dependency_tree) {
             package_name = package.split('@')[0];
         }
 
+        // this package has 0 dependents and 0 dependencies, causes many problems in nodejs
+        if (package_name == 'null') {
+            continue
+        }
+
         // add package name to set
         temp_set.add(package_name);
 
@@ -398,7 +404,8 @@ function make_call(i) {
             let result = run_tests(p);
 
             if (result != null && result['package_name'] != '') {
-                fs.writeSync(log, ',' + result['package_name'] + ',' + result['weekly_downloads']);
+                // log dependency name, typosquatting candidate
+                fs.writeSync(log, ',' + p + ',' + result['package_name']);
             }
 
         }
@@ -418,7 +425,7 @@ function make_call(i) {
     // record results
 
 
-// for cdf, count packages (A) with dependencies (B) that are typosquatting a package (C) with download counts
+// for cdf, count packages (A) with dependencies (B) that are typosquatting a package (C)
 
 // start analysis
 make_call(0);
