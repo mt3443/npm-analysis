@@ -2,6 +2,10 @@ var itertools = require('itertools');
 var fs = require('fs');
 var csvjson = require('csvjson');
 
+// output file
+// FOLLOWER OUTPUT FORMAT (TYPOSQUATTING PACKAGE, POPULAR PACKAGE)
+var log = fs.openSync('follower_output', 'a');
+
 // package name delimiter regex
 var delimiter_regex = /[\-|\.|_]/g;
 var delimiters = ['', '.', '-', '_'];
@@ -57,7 +61,7 @@ var typos = {
     '/': ['1', 'l', 'i']
 };
 
-const popular_packages = csvjson.toObject(fs.readFileSync('C:\\users\\matthew\\npm-analysis\\data\\popular_packages.txt').toString());
+const popular_packages = csvjson.toObject(fs.readFileSync('../data/downloads.csv').toString());
 var popular_package_names_set = new Set();
 var dl_count_dict = {};
 
@@ -341,12 +345,14 @@ function run_tests(package_name) {
     }
 }
 
-function scan_packages(packages) {
+function scan(package_name) {
 
-    for (let package of packages) {
-        run_tests(package);
+    let results = run_tests(package_name);
+
+    if (results != null) {
+        fs.writeSync(log, package_name + ',' + results + '\n');
     }
-    
+
 }
 
-module.exports = {scan_packages: scan_packages};
+module.exports = {scan: scan};

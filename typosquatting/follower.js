@@ -1,9 +1,9 @@
 var changes = require('concurrent-couch-follower');
-var typosquatting = require('./typosquatting')
+var typosquatting = require('./typosquatting_follower.js')
 
 // NPM CouchDB on_change function, pass to typosquatting detector
 var dataHandler = function(data, done) {
-    typosquatting.detect_typosquatting(data.id);
+    typosquatting.scan(data.id);
     done();
 };
 
