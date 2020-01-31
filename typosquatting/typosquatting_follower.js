@@ -66,7 +66,11 @@ var popular_package_names_set = new Set();
 var dl_count_dict = {};
 
 for (let p of popular_packages) {
-    popular_package_names_set.add(p['package_name']);
+    
+    if (p['weekly_downloads'] >= 1000) {
+        popular_package_names_set.add(p['package_name']);
+    }
+
     dl_count_dict[p['package_name']] = p['weekly_downloads'];
 }
 
