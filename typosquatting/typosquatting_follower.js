@@ -61,12 +61,15 @@ var typos = {
     '/': ['1', 'l', 'i']
 };
 
-const popular_packages = csvjson.toObject(fs.readFileSync('../data/downloads.csv').toString());
+const all_packages = csvjson.toObject(fs.readFileSync('../data/downloads.csv').toString());
+var all_package_names_set = new Set();
 var popular_package_names_set = new Set();
 var dl_count_dict = {};
 
-for (let p of popular_packages) {
+for (let p of all_packages) {
     
+    all_package_names_set.add(p['package_name']);
+
     if (p['weekly_downloads'] >= 1000) {
         popular_package_names_set.add(p['package_name']);
     }
@@ -360,6 +363,11 @@ function run_tests(package_name) {
 
 function scan(package_name) {
 
+    if (all_package_names_set.has(package_name)) {
+        return;
+    }
+
+    all_package_names_set.add(package_name);
     let results = run_tests(package_name);
 
     if (results != null) {
