@@ -228,6 +228,10 @@ function swapped_words(package_name) {
         }
     }
 
+    if (ret_package_name == '') {
+        return null;
+    }
+
     return {'package_name': ret_package_name, 'weekly_downloads': dl_count_dict[ret_package_name]};
 
 }

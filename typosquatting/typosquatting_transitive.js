@@ -239,6 +239,10 @@ function swapped_words(package_name) {
         }
     }
 
+    if (ret_package_name == '') {
+        return null;
+    }
+
     return {'package_name': ret_package_name, 'weekly_downloads': ret_dl_count};
 
 }
