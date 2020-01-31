@@ -341,7 +341,12 @@ function run_tests(package_name) {
         return null;
     } else {
         results.sort((a, b) => {return b['weekly_downloads'] - a['weekly_downloads']});
-        return results[0]['package_name'];
+
+        if (results[0]['weekly_downloads'] >= 1000) {
+            return results[0]['package_name'];
+        }
+
+        return null;
     }
 }
 
